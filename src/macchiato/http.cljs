@@ -1,12 +1,13 @@
 (ns macchiato.http
   (:require
+    [macchiato.cookies :as cookies]
     [clojure.string :as s]))
 
 (def Stream (js/require "stream"))
 
 (def url-parser (js/require "url"))
 
-(defn req->map [req]
+(defn req->map [req res opts]
   (let [conn    (.-connection req)
         url     (.parse url-parser (.-url req))
         headers (js->clj (.-headers req) :keywordize-keys true)
@@ -16,6 +17,7 @@
      :server-name     (:address address)
      :remote-addr     (.-remoteAddress conn)
      :headers         headers
+     :cookies         (cookies/request-cookies req res (:cookies opts))
      :content-type    (:content-type headers)
      :content-length  (:content-length headers)
      :method          (keyword (.-method req))
@@ -23,7 +25,6 @@
      :uri             (.-pathname url)
      :query           (when-let [query (.-search url)] (.substring query 1))
      :body            (.-body req)
-     :cookies         (.-cookies req)
      :fresh?          (.-fresh req)
      :hostname        (-> req .-headers .-host (s/split #":") first)
      :params          (js->clj (.-param req) :keywordize-keys true)
@@ -34,7 +35,8 @@
      :stale?          (.-state req)
      :subdomains      (js->clj (.-subdomains req))
      :xhr?            (.-xhr req)
-     :req             req}))
+     :node/request    req
+     :node/response   res}))
 
 (defprotocol IHTTPResponseWriter
   (-write-response [data res] "Write data to a http.ServerResponse"))
@@ -89,12 +91,14 @@
     (.pipe data res)
     false))
 
-(defn response [res]
-  (fn [{:keys [status headers body]}]
+(defn response [req res opts]
+  (fn [{:keys [cookies headers body status]}]
     (.writeHead res status (clj->js headers))
+    (cookies/set-cookies cookies req res (:cookies opts))
     (when (-write-response body res)
       (.end res))))
 
-(defn handler [handler-fn]
-  (fn [req res]
-    (handler-fn (req->map req) (response res))))
+(defn handler [handler-fn & [opts]]
+  (let [opts (or opts {})]
+    (fn [req res]
+      (handler-fn (req->map req res opts) (response req res opts)))))

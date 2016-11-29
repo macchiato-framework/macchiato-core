@@ -1,4 +1,4 @@
-(defproject macchiato/http "0.0.4"
+(defproject macchiato/http "0.0.5"
   :description "Macchiato Node.js HTTP wrapper"
   :url "https://github.com/yogthos/macchiato-framework/macchiato-http"
   :scm {:name "git"
@@ -9,7 +9,10 @@
   :dependencies []
   :plugins [[codox "0.6.4"]
             [lein-npm "0.6.2"]]
-  :npm {:dependencies [[stream "0.0.2"]
+  :npm {:dependencies [[cookies "0.6.2"]
+                       [etag "1.7.0"]
+                       [random-bytes "1.0.0"]
+                       [stream "0.0.2"]
                        [url "0.11.0"]]}
   :profiles {:dev
              {:dependencies [[org.clojure/clojurescript "1.9.293"]]
