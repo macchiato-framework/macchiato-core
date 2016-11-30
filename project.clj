@@ -1,4 +1,4 @@
-(defproject macchiato/http "0.0.5"
+(defproject macchiato/http "0.0.6"
   :description "Macchiato Node.js HTTP wrapper"
   :url "https://github.com/yogthos/macchiato-framework/macchiato-http"
   :scm {:name "git"
