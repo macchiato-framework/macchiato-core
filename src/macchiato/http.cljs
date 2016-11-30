@@ -93,8 +93,8 @@
 
 (defn response [req res opts]
   (fn [{:keys [cookies headers body status]}]
-    (.writeHead res status (clj->js headers))
     (cookies/set-cookies cookies req res (:cookies opts))
+    (.writeHead res status (clj->js headers))
     (when (-write-response body res)
       (.end res))))
 
