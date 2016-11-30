@@ -4,7 +4,7 @@
 
 (def random-bytes (js/require "random-bytes"))
 
-(def secret (random-bytes. 32))
+(def secret (str (random-bytes. 32)))
 
 (def ^{:doc "HTTP token: 1*<any CHAR except CTLs or tspecials>. See RFC2068"} re-token #"[!#$%&'*\-+.0-9A-Z\^_`a-z\|~]+")
 
@@ -44,8 +44,14 @@
       (when http-only {:http-only http-only})
       (when overwrite? {:overwrite overwrite?}))))
 
+(defn gen-keys [cookie-opts]
+  (clj->js {:keys (or (:keys cookie-opts) [secret])}))
+
+(defn signed [opts]
+  (clj->js {:signed (boolean (:signed? opts))}))
+
 (defn set-cookies [cookies req res cookie-opts]
-  (let [cookie-manager (Cookies. req res (clj->js {:keys (or (:keys cookie-opts) [secret])}))]
+  (let [cookie-manager (Cookies. req res (clj->js (gen-keys cookie-opts)))]
     (doseq [[k {:keys [value] :as opts}] cookies]
       (.set cookie-manager (name k) (-serialize-cookie value) (translate-cookie-opts opts)))))
 
@@ -56,8 +62,8 @@
     [name value]))
 
 (defn request-cookies [req res opts]
-  (let [cookie-manager (Cookies. req res (clj->js {:keys (or (:keys opts) [secret])}))]
+  (let [cookie-manager (Cookies. req res (gen-keys opts))]
     (reduce
       (fn [cookies [k]]
-        (assoc cookies k (.get cookie-manager (name k) (clj->js {:signed (boolean (:signed? opts))}))))
+        (assoc cookies k (.get cookie-manager (name k) (signed opts))))
       {} (-> (.-headers req) (aget "cookie") parse-cookie-header))))
