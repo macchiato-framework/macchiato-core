@@ -65,5 +65,5 @@
   (let [cookie-manager (Cookies. req res (gen-keys opts))]
     (reduce
       (fn [cookies [k]]
-        (assoc cookies k (.get cookie-manager (name k) (signed opts))))
+        (assoc cookies k {:value (.get cookie-manager (name k) (signed opts))}))
       {} (-> (.-headers req) (aget "cookie") parse-cookie-header))))
