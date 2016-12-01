@@ -55,15 +55,9 @@
     (doseq [[k {:keys [value] :as opts}] cookies]
       (.set cookie-manager (name k) (-serialize-cookie value) (translate-cookie-opts opts)))))
 
-(defn- parse-cookie-header
-  "Turn a HTTP Cookie header into a list of name/value pairs."
-  [header]
-  (for [[_ name value] (re-seq re-cookie header)]
-    [name value]))
-
 (defn request-cookies [req res opts]
   (let [cookie-manager (Cookies. req res (gen-keys opts))]
     (reduce
-      (fn [cookies [k]]
+      (fn [cookies k]
         (assoc cookies k {:value (.get cookie-manager (name k) (signed opts))}))
-      {} (-> (.-headers req) (aget "cookie") parse-cookie-header))))
+      {} (map second (re-seq re-cookie (-> (.-headers req) (aget "cookie")))))))
