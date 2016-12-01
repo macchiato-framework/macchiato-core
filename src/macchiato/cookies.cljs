@@ -12,7 +12,7 @@
 
 (def ^{:private true, :doc "RFC6265 cookie-value"} re-cookie-value (re-pattern (str "\"" (.-source re-cookie-octet) "*\"|" (.-source re-cookie-octet) "*")))
 
-(def ^{:private true, :doc "RFC6265 set-cookie-string"}  re-cookie (re-pattern (str "\\s*(" (.-source re-token) ")=(" (.-source re-cookie-value) ")\\s*[;,]?")))
+(def ^{:private true, :doc "RFC6265 set-cookie-string"} re-cookie (re-pattern (str "\\s*(" (.-source re-token) ")=(" (.-source re-cookie-value) ")\\s*[;,]?")))
 
 (defprotocol ICookie
   (-serialize-cookie [cookie] "serialize cookie value"))
@@ -56,8 +56,9 @@
       (.set cookie-manager (name k) (-serialize-cookie value) (translate-cookie-opts opts)))))
 
 (defn request-cookies [req res opts]
-  (let [cookie-manager (Cookies. req res (gen-keys opts))]
-    (reduce
-      (fn [cookies k]
-        (assoc cookies k {:value (.get cookie-manager (name k) (signed opts))}))
-      {} (map second (re-seq re-cookie (-> (.-headers req) (aget "cookie")))))))
+  (when-let [cookies (-> (.-headers req) (aget "cookie"))]
+    (let [cookie-manager (Cookies. req res (gen-keys opts))]
+      (reduce
+        (fn [cookies k]
+          (assoc cookies k {:value (.get cookie-manager (name k) (signed opts))}))
+        {} (map second (re-seq re-cookie cookies))))))
