@@ -1,6 +1,7 @@
 (ns macchiato.http
   (:require
     [macchiato.cookies :as cookies]
+    [macchiato.session.middleware :as session]
     [clojure.string :as s]))
 
 (def Stream (js/require "stream"))
@@ -99,6 +100,9 @@
       (.end res))))
 
 (defn handler [handler-fn & [opts]]
-  (let [opts (or opts {})]
+  (let [opts (or opts {})
+        http-handler (if-let [session-opts (:session opts)]
+                       (session/wrap-session handler-fn session-opts)
+                       handler-fn)]
     (fn [req res]
-      (handler-fn (req->map req res opts) (response req res opts)))))
+      (http-handler (req->map req res opts) (response req res opts)))))

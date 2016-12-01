@@ -1,4 +1,4 @@
-(defproject macchiato/http "0.0.8"
+(defproject macchiato/http "0.0.9"
   :description "Macchiato Node.js HTTP wrapper"
   :url "https://github.com/yogthos/macchiato-framework/macchiato-http"
   :scm {:name "git"
@@ -6,7 +6,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :clojurescript? true
-  :dependencies []
+  :dependencies [[macchiato/session "0.0.2"]]
   :plugins [[codox "0.6.4"]
             [lein-npm "0.6.2"]]
   :npm {:dependencies [[cookies "0.6.2"]
