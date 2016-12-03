@@ -1,1 +1,2 @@
-### ClojureScript HTTP wrapper for Node.js
+### Macchiato HTTP Core
+

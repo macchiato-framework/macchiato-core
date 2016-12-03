@@ -1,8 +1,8 @@
-(defproject macchiato/http "0.0.9"
-  :description "Macchiato Node.js HTTP wrapper"
-  :url "https://github.com/yogthos/macchiato-framework/macchiato-http"
+(defproject macchiato/core "0.0.1"
+  :description "core Macchiato HTTP library"
+  :url "https://github.com/yogthos/macchiato-framework/macchiato-core"
   :scm {:name "git"
-         :url "https://github.com/macchiato-framework/macchiato-http.git"}
+        :url "https://github.com/macchiato-framework/macchiato-core.git"}
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :clojurescript? true
