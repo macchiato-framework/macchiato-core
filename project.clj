@@ -6,7 +6,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :clojurescript? true
-  :dependencies [[macchiato/session "0.0.2"]]
+  :dependencies [[macchiato/session "0.0.3"]]
   :plugins [[codox "0.6.4"]
             [lein-npm "0.6.2"]]
   :npm {:dependencies [[cookies "0.6.2"]

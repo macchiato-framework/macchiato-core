@@ -40,69 +40,77 @@
      :node/response   res}))
 
 (defprotocol IHTTPResponseWriter
-  (-write-response [data res] "Write data to a http.ServerResponse"))
-
-(defn error-response [res status err]
-  ;;TODO
-  )
+  (-write-response [data res raise] "Write data to a http.ServerResponse"))
 
 (extend-protocol IHTTPResponseWriter
 
   nil
-  (-write-response [_ _] true)
+  (-write-response [_ _ _] true)
 
   string
-  (-write-response [data res]
-    (.write res data)
+  (-write-response [data node-server-response _]
+    (.write node-server-response data)
     true)
 
   PersistentHashMap
-  (-write-response [data res]
-    (.write res (-> data clj->js js/JSON.stringify))
+  (-write-response [data node-server-response _]
+    (.write node-server-response (-> data clj->js js/JSON.stringify))
     true)
 
   PersistentArrayMap
-  (-write-response [data res]
-    (.write res (-> data clj->js js/JSON.stringify))
+  (-write-response [data node-server-response _]
+    (.write node-server-response (-> data clj->js js/JSON.stringify))
     true)
 
   PersistentVector
-  (-write-response [data res]
-    (doseq [i data] (-write-response i res))
+  (-write-response [data node-server-response raise]
+    (doseq [i data] (-write-response i node-server-response raise))
     true)
 
   List
-  (-write-response [data res]
-    (doseq [i data] (-write-response i res))
+  (-write-response [data node-server-response raise]
+    (doseq [i data] (-write-response i node-server-response raise))
     true)
 
   LazySeq
-  (-write-response [data res]
-    (doseq [i data] (-write-response i res))
+  (-write-response [data node-server-response raise]
+    (doseq [i data] (-write-response i node-server-response raise))
     true)
 
   js/Buffer
-  (-write-response [data res]
-    (.write res data)
+  (-write-response [data node-server-response _]
+    (.write node-server-response data)
     true)
 
   Stream
-  (-write-response [data res]
-    (.on data "error" #(error-response res 500 %))
-    (.pipe data res)
+  (-write-response [data node-server-response raise]
+    (.on data "error" raise)
+    (.pipe data node-server-response)
     false))
 
-(defn response [req res opts]
+(defn response [request-map node-server-response raise opts]
   (fn [{:keys [cookies headers body status]}]
-    (cookies/set-cookies cookies req res (:cookies opts))
-    (.writeHead res status (clj->js headers))
-    (when (-write-response body res)
-      (.end res))))
+    (cookies/set-cookies cookies request-map node-server-response (:cookies opts))
+    (.writeHead node-server-response status (clj->js headers))
+    (try
+      (when (-write-response body node-server-response raise)
+        (.end node-server-response))
+      (catch js/Error e
+        (raise e)))))
+
+(defn error-handler [node-server-response]
+  (fn [error]
+    (doto node-server-response
+      (.writeHead 500 #js {"content-type" "text/html"})
+      (.write (.-message error))
+      (.end))))
 
 (defn handler [handler-fn & [opts]]
-  (let [opts (or opts {})
-        http-handler (if-let [session-opts (:session opts)]
-                       (session/wrap-session handler-fn session-opts)
-                       handler-fn)]
-    (fn [req res]
-      (http-handler (req->map req res opts) (response req res opts)))))
+  (let [opts          (merge {} opts)
+        http-handler  (if-let [session-opts (:session opts)]
+                        (session/wrap-session handler-fn session-opts)
+                        handler-fn)]
+    (fn [node-client-request node-server-response]
+      (http-handler (req->map node-client-request node-server-response opts)
+                    (response node-client-request node-server-response error-handler opts)
+                    (error-handler node-server-response)))))
