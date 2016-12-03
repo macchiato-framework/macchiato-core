@@ -50,51 +50,49 @@
   string
   (-write-response [data node-server-response _]
     (.write node-server-response data)
-    true)
+    (.end node-server-response))
 
   PersistentHashMap
   (-write-response [data node-server-response _]
     (.write node-server-response (-> data clj->js js/JSON.stringify))
-    true)
+    (.end node-server-response))
 
   PersistentArrayMap
   (-write-response [data node-server-response _]
     (.write node-server-response (-> data clj->js js/JSON.stringify))
-    true)
+    (.end node-server-response))
 
   PersistentVector
   (-write-response [data node-server-response raise]
     (doseq [i data] (-write-response i node-server-response raise))
-    true)
+    (.end node-server-response))
 
   List
   (-write-response [data node-server-response raise]
     (doseq [i data] (-write-response i node-server-response raise))
-    true)
+    (.end node-server-response))
 
   LazySeq
   (-write-response [data node-server-response raise]
     (doseq [i data] (-write-response i node-server-response raise))
-    true)
+    (.end node-server-response))
 
   js/Buffer
   (-write-response [data node-server-response _]
     (.write node-server-response data)
-    true)
+    (.end node-server-response))
 
   Stream
   (-write-response [data node-server-response raise]
     (.on data "error" raise)
-    (.pipe data node-server-response)
-    false))
+    (.pipe data node-server-response)))
 
 (defn response [request-map node-server-response raise opts]
   (fn [{:keys [cookies headers body status]}]
-    (cookies/set-cookies cookies request-map node-server-response (:cookies opts))
-    (.writeHead node-server-response status (clj->js headers))
     (try
-      (when (-write-response body node-server-response raise)
-        (.end node-server-response))
+      (cookies/set-cookies cookies request-map node-server-response (:cookies opts))
+      (.writeHead node-server-response status (clj->js headers))
+      (-write-response body node-server-response raise)
       (catch js/Error e
         (raise e)))))
 
