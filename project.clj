@@ -6,12 +6,13 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :clojurescript? true
-  :dependencies [[macchiato/session "0.0.3"]]
+  :dependencies [[funcool/cuerdas "2.0.1"]]
   :plugins [[codox "0.6.4"]
             [lein-npm "0.6.2"]]
   :npm {:dependencies [[cookies "0.6.2"]
                        [etag "1.7.0"]
                        [random-bytes "1.0.0"]
+                       [simple-encryptor "1.1.0"]
                        [stream "0.0.2"]
                        [url "0.11.0"]]}
   :profiles {:dev
