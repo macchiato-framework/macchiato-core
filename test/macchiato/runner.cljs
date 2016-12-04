@@ -1,6 +1,8 @@
 (ns macchiato.runner
   (:require
     [doo.runner :refer-macros [doo-tests]]
-    [macchiato.core-test]))
+    [macchiato.test.core-test]
+    [macchiato.test.content-type]))
 
-(doo-tests 'macchiato.core-test)
+(doo-tests 'macchiato.test.core-test
+           'macchiato.test.content-type)

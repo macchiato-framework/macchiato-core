@@ -38,4 +38,5 @@
   {"test"
    ["do"
     ["npm" "install"]
+    ["clean"]
     ["with-profile" "test" "doo" "node"]]})

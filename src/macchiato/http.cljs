@@ -11,7 +11,7 @@
 (defn req->map [req res opts]
   (let [conn    (.-connection req)
         url     (.parse url-parser (.-url req))
-        headers (js->clj (.-headers req) :keywordize-keys true)
+        headers (js->clj (.-headers req))
         address (js->clj (.address conn) :keywordize-keys true)]
 
     {:server-port     (:port address)
