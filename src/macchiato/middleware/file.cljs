@@ -28,12 +28,14 @@
   (if-let [http-date (res/get-header response header)]
     (parse-date http-date)))
 
-(defn- not-modified-since? [request response]
-  (let [modified-date  (date-header response "Last-Modified")
-        modified-since (date-header request "if-modified-since")]
-    (and modified-date
-         modified-since
-         (not (before? modified-since modified-date)))))
+(defn- not-modified-since? [request response etag]
+  (or
+    (= (get-in request [:headers :if-none-match]) etag)
+    (let [modified-date  (date-header response "Last-Modified")
+          modified-since (date-header request "if-modified-since")]
+      (and modified-date
+           modified-since
+           (not (before? modified-since modified-date))))))
 
 (defn file-info-response
   "Adds headers to response as described in wrap-file-info."
@@ -47,7 +49,7 @@
                           (res/content-type type)
                           (res/header "ETag" etag)
                           (res/header "Last-Modified" lmodified))]
-         (if (not-modified-since? request lmodified)
+         (if (not-modified-since? request lmodified etag)
            (-> response
                (res/status 304)
                (res/header "Content-Length" 0)
