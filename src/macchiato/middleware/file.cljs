@@ -2,8 +2,7 @@
   (:require
     [cljs-time.core :refer [before?]]
     [macchiato.util.response :as res]
-    [macchiato.util.mime-type :refer [ext-mime-type]]
-    [macchiato.util.time :refer [parse-date]]))
+    [macchiato.util.mime-type :refer [ext-mime-type]]))
 
 (def Stream (js/require "stream"))
 (def etag (js/require "etag"))
@@ -23,20 +22,6 @@
      :size      (aget stats "size")
      :type      (guess-mime-type stream mime-types)}))
 
-
-(defn- date-header [response header]
-  (if-let [http-date (res/get-header response header)]
-    (parse-date http-date)))
-
-(defn- not-modified-since? [request response etag]
-  (or
-    (= (get-in request [:headers :if-none-match]) etag)
-    (let [modified-date  (date-header response "Last-Modified")
-          modified-since (date-header request "if-modified-since")]
-      (and modified-date
-           modified-since
-           (not (before? modified-since modified-date))))))
-
 (defn file-info-response
   "Adds headers to response as described in wrap-file-info."
   ([response request]
@@ -49,7 +34,7 @@
                           (res/content-type type)
                           (res/header "ETag" etag)
                           (res/header "Last-Modified" lmodified))]
-         (if (not-modified-since? request lmodified etag)
+         (if (= (get-in request [:headers :if-none-match]) etag)
            (-> response
                (res/status 304)
                (res/header "Content-Length" 0)
