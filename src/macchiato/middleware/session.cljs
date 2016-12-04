@@ -1,4 +1,4 @@
-(ns macchiato.session.middleware
+(ns macchiato.middleware.session
   (:require [macchiato.session.memory :as mem]
             [macchiato.session.store :as store]))
 

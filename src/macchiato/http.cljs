@@ -1,7 +1,7 @@
 (ns macchiato.http
   (:require
     [macchiato.cookies :as cookies]
-    [macchiato.session.middleware :as session]
+    [macchiato.middleware.session :as session]
     [clojure.string :as s]))
 
 (def Stream (js/require "stream"))
@@ -45,7 +45,7 @@
 (extend-protocol IHTTPResponseWriter
 
   nil
-  (-write-response [_ _ _] true)
+  (-write-response [_ _ _])
 
   string
   (-write-response [data node-server-response _]

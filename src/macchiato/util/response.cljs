@@ -1,10 +1,9 @@
-(ns macchiato.response
+(ns macchiato.util.response
   (:require [cuerdas.core :as string]))
 
 (defn find-header
   "Looks up a header in a response (or request) case insensitively,
   returning the header map entry, or nil if not present."
-  {:added "1.4"}
   [resp header-name]
   (->> (:headers resp)
        (filter #(= (string/lower header-name)
@@ -14,7 +13,6 @@
 (defn get-header
   "Looks up a header in a response (or request) case insensitively,
   returning the value of the header, or nil if not present."
-  {:added "1.2"}
   [resp header-name]
   (some-> resp (find-header header-name) val))
 
@@ -22,7 +20,6 @@
   "Looks up a header in a response (or request) case insensitively,
   then updates the header with the supplied function and arguments in the
   manner of update-in."
-  {:added "1.4"}
   [resp header-name f & args]
   (let [header-key (or (some-> resp (find-header header-name) key) header-name)]
     (update-in resp [:headers header-key] #(apply f % args))))
@@ -41,7 +38,6 @@
 (defn charset
   "Returns an updated response with the supplied charset added to the
   Content-Type header."
-  {:added "1.1"}
   [resp charset]
   (update-header resp "Content-Type"
                  (fn [content-type]
@@ -49,9 +45,22 @@
                        (string/replace #";\s*charset=[^;]*" "")
                        (str "; charset=" charset)))))
 
+(defn status
+  "sets the status code of the response"
+  [resp status]
+  (assoc resp :status status))
+
+(def fs (js/require "fs"))
+
+(defn file
+  "accepts a filename, and returns a response with the body set to the file stream."
+  [filename]
+  {:status 200
+   :headers {}
+   :body (.createReadStream fs filename)})
+
 (defn response?
   "True if the supplied value is a valid response map."
-  {:added "1.1"}
   [resp]
   (and (map? resp)
        (integer? (:status resp))
