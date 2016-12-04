@@ -10,11 +10,13 @@
                  [com.andrewmcveigh/cljs-time "0.4.0"]]
   :plugins [[codox "0.6.4"]
             [lein-npm "0.6.2"]]
-  :npm {:dependencies [[cookies "0.6.2"]
+  :npm {:dependencies [[multiparty "4.1.2"]
+                       [cookies "0.6.2"]
                        [etag "1.7.0"]
                        [random-bytes "1.0.0"]
                        [simple-encryptor "1.1.0"]
-                       [url "0.11.0"]]}
+                       [url "0.11.0"]
+                       [x-www-form-urlencode "0.1.1"]]}
   :profiles {:dev
              {:dependencies [[org.clojure/clojurescript "1.9.293"]]
               :plugins [[lein-cljsbuild "1.1.4"]]}})

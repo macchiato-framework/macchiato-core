@@ -8,8 +8,6 @@ re-token #"[!#$%&'*\-+.0-9A-Z\^_`a-z\|~]+")
 (def ^{:doc "HTTP quoted-string: <\"> *<any TEXT except \"> <\">. See RFC2068."}
 re-quoted #"\"(\\\"|[^\"])*\"")
 
-(def ^{:doc "HTTP value: token | quoted-string. See RFC2109"})
-
 (def ^{:doc "HTTP value: token | quoted-string. See RFC2109"}
 re-value (str re-token "|" re-quoted))
 
@@ -35,14 +33,16 @@ re-value (str re-token "|" re-quoted))
   (if-let [length (get-in request [:headers "content-length"])]
     (js/parseFloat length)))
 
-(def ^:private charset-pattern
+;;TODO
+#_(def ^:private charset-pattern
   (re-pattern (str ";(?:.*\\s)?(?i:charset)=(" re-value ")\\s*(?:;|$)")))
 
 (defn character-encoding
   "Return the character encoding for the request, or nil if it is not set."
   [request]
   (if-let [type (get-in request [:headers "content-type"])]
-    (second (re-find charset-pattern type))))
+    (second (.split type "charset="))
+    #_(second (re-find charset-pattern type))))
 
 (defn urlencoded-form?
   "True if a request contains a urlencoded form in the body."
@@ -59,14 +59,14 @@ re-value (str re-token "|" re-quoted))
       nil :nil)))
 
 (defmulti body-string
-  "Return the request body as a string." {:arglists '([request])}
-  (fn [{:keys [body]}]
-    (let [t (type body)]
-      (cond
-        (= t Keyword) :keyword
-        (= t js/String) :stting
-        (satisfies? ICollection body) :coll
-        nil :nil))))
+          "Return the request body as a string." {:arglists '([request])}
+          (fn [{:keys [body]}]
+            (let [t (type body)]
+              (cond
+                (= t Keyword) :keyword
+                (= t js/String) :stting
+                (satisfies? ICollection body) :coll
+                nil :nil))))
 
 (defmethod body-string :nil [_] nil)
 

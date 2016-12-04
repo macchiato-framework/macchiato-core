@@ -24,7 +24,7 @@
      :method          (keyword (.-method req))
      :url             (.-url req)
      :uri             (.-pathname url)
-     :query           (when-let [query (.-search url)] (.substring query 1))
+     :query-string    (when-let [query (.-search url)] (.substring query 1))
      :body            (.-body req)
      :fresh?          (.-fresh req)
      :hostname        (-> req .-headers .-host (s/split #":") first)
