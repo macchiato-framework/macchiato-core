@@ -24,15 +24,18 @@
     (let [form (if opts
                  (.form multiparty (parse-opts opts))
                  (.form multiparty))]
-      (.parse form request
+
+
+      (.parse form (:node/request request)
               (fn [err fields files]
-                (if err (raise err)
+                (if err
+                  (raise err)
                   (handler
                     (assoc request
-                      {:fields fields
-                       :files files}
-                      respond
-                      raise))))))
+                      :fields fields
+                      :files files)
+                    respond
+                    raise)))))
     request))
 
 (defn wrap-multipart
@@ -42,8 +45,7 @@
   :max-files-size - Only relevant when autoFiles is true. Limits the total bytes accepted for all files combined. If this value is exceeded, an error event is emitted. The default is Infinity.
   :auto-fields - Enables field events and disables part events for fields. This is automatically set to true if you add a field listener.
   :auto-files - Enables file events and disables part events for files. This is automatically set to true if you add a file listener.
-  :upload-dir - Only relevant when autoFiles is true. The directory for placing file uploads in. You can move them later using fs.rename(). Defaults to os.tmpDir().
-  :progress-fn - a function that gets called during uploads. The function."
+  :upload-dir - Only relevant when autoFiles is true. The directory for placing file uploads in. You can move them later using fs.rename(). Defaults to os.tmpDir()."
   [handler & [opts]]
   (fn [request respond raise]
     (handler (multipart-request handler request respond raise opts) respond raise)))

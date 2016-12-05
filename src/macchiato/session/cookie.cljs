@@ -1,42 +1,22 @@
 (ns macchiato.session.cookie
   (:require
     [cljs.reader :as edn]
+    [macchiato.crypto :as c]
     [macchiato.session.store :refer [SessionStore]]))
-
-(def crypto (js/require "simple-encryptor"))
-
-(defn encrypt [key data]
-  (.encrypt (crypto. key) data))
-
-(defn decrypt [key data]
-  (.decrypt (crypto. key) data))
-
-(defn eq?
-  "Test whether two sequences of characters or bytes are equal in a way that
-  protects against timing attacks. Note that this does not prevent an attacker
-  from discovering the *length* of the data being compared."
-  [a b]
-  (let [a (map int a), b (map int b)]
-    (if (and a b (= (count a) (count b)))
-      (zero? (reduce bit-or (map bit-xor a b)))
-      false)))
-
-(defn hmac [key data]
-  (.hmac (crypto. key) data))
 
 (defn- seal
   "Seal a Clojure data structure into an encrypted and HMACed string."
   [key data]
-  (let [data (encrypt key (pr-str data))]
-    (str (.toString (js/Buffer. data) "base64") "--" (hmac key data))))
+  (let [data (c/encrypt key (pr-str data))]
+    (str (.toString (js/Buffer. data) "base64") "--" (c/hmac key data))))
 
 (defn- unseal
   "Retrieve a sealed Clojure data structure from a string"
   [key string]
   (let [[data mac] (.split string "--")
         data (.toString (js/Buffer. data "base64") "utf8")]
-    (if (eq? mac (hmac key data))
-      (edn/read-string (decrypt key data)))))
+    (if (c/eq? mac (c/hmac key data))
+      (edn/read-string (c/decrypt key data)))))
 
 (deftype CookieStore [secret-key]
   SessionStore
