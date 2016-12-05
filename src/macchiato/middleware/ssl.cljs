@@ -42,7 +42,12 @@
   (or (= method :head)
       (= method :get)))
 
+(defn- valid-url? [url-string]
+  (re-matches #"^http[s]?\://.*" url-string))
+
 (defn- https-url [url-string port]
+  (when-not (valid-url? url-string)
+    (throw (js/Error. (str "invalid URL: " url-string))))
   (let [url (.parse url url-string)]
     (str
       "https://"
@@ -59,7 +64,7 @@
   See: wrap-ssl-redirect."
   [request options]
   (-> (resp/found (https-url (req/request-url request) (:ssl-port options)))
-      (resp/status   (if (get-request? request) 301 307))))
+      (resp/status (if (get-request? request) 301 307))))
 
 (defn wrap-ssl-redirect
   "Middleware that redirects any HTTP request to the equivalent HTTPS URL.
@@ -70,15 +75,13 @@
   ([handler]
    (wrap-ssl-redirect handler {}))
   ([handler options]
-   (fn
-     ([request]
-      (if (= (:scheme request) :https)
-        (handler request)
-        (ssl-redirect-response request options)))
-     ([request respond raise]
-      (if (= (:scheme request) :https)
-        (handler request respond raise)
-        (respond (ssl-redirect-response request options)))))))
+   (fn [request respond raise]
+     (if (= (:scheme request) :https)
+       (handler request respond raise)
+       (try
+         (respond (ssl-redirect-response request options))
+         (catch js/Error e
+           (raise e)))))))
 
 (defn- build-hsts-header
   [{:keys [max-age include-subdomains?]
