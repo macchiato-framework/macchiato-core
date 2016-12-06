@@ -32,11 +32,8 @@
   ([handler]
    (wrap-forwarded-scheme handler default-scheme-header))
   ([handler header]
-   (fn
-     ([request]
-      (handler (forwarded-scheme-request request header)))
-     ([request respond raise]
-      (handler (forwarded-scheme-request request header) respond raise)))))
+   (fn [request respond raise]
+     (handler (forwarded-scheme-request request header) respond raise))))
 
 (defn- get-request? [{method :request-method}]
   (or (= method :head)
