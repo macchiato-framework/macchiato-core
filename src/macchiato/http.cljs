@@ -21,7 +21,7 @@
      :cookies         (cookies/request-cookies req res (:cookies opts))
      :content-type    (:content-type headers)
      :content-length  (:content-length headers)
-     :method          (keyword (.-method req))
+     :method          (keyword (s/lower-case (.-method req)))
      :url             (.-url req)
      :uri             (.-pathname url)
      :query-string    (when-let [query (.-search url)] (.substring query 1))
