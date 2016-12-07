@@ -7,6 +7,8 @@
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
   :clojurescript? true
   :dependencies [[funcool/cuerdas "2.0.1"]
+                 [org.clojure/clojure "1.8.0" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.293" :scope "provided"]
                  [com.andrewmcveigh/cljs-time "0.4.0"]]
   :plugins [[codox "0.6.4"]
             [lein-doo "0.1.7"]

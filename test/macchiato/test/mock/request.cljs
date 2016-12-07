@@ -97,9 +97,7 @@
                    :query-string   query
                    :scheme         scheme
                    :request-method method
-                   :headers        {"host" (if port
-                                             (str host ":" port)
-                                             host)}}]
+                   :headers        {"host" (if port (str host ":" port) host)}}]
      (if (#{:get :head :delete} method)
        (merge-query request params)
        (body request params)))))

@@ -51,8 +51,7 @@
       (when-let [auth (.-auth url)]
         (str auth "@"))
       (.-hostname url)
-      ":"
-      (or port 443)
+      (when port (str ":" port))
       (.-path url)
       (.-hash url))))
 
