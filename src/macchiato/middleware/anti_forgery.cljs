@@ -1,7 +1,7 @@
 (ns macchiato.middleware.anti-forgery
   (:require [macchiato.crypto :as c]))
 
-(def ^{:doc "Binding that stores an anti-forgery token that must be included in POST forms if the handler is wrapped in wrap-anti-forgery."
+(def ^{:doc     "Binding that stores an anti-forgery token that must be included in POST forms if the handler is wrapped in wrap-anti-forgery."
        :dynamic true}
 *anti-forgery-token*)
 
@@ -45,8 +45,8 @@
       (= method :options)))
 
 (defn- valid-request? [request read-token]
-  (and (not (get-request? request))
-       (not (valid-token? request read-token))))
+  (or (get-request? request)
+      (valid-token? request read-token)))
 
 (def ^:private default-error-response
   {:status  403
@@ -95,5 +95,5 @@
        (let [token (find-or-create-token request)]
          (binding [*anti-forgery-token* token]
            (if (valid-request? request read-token)
-             (error-handler request respond raise)
-             (handler request #(respond (add-session-token % request token)) raise))))))))
+             (handler request #(respond (add-session-token % request token)) raise)
+             (error-handler request respond raise))))))))

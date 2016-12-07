@@ -1,12 +1,10 @@
 (ns macchiato.test.ssl
   (:require
     [macchiato.middleware.ssl :as ssl]
+    [macchiato.test.mock.util :refer [mock-handler ok-response]]
     [macchiato.util.response :refer [ok get-header]]
     [macchiato.test.mock.request :refer [header request]]
     [cljs.test :refer-macros [is are deftest testing use-fixtures]]))
-
-(defn mock-handler [mw-fn handler & [opts]]
-  #((if opts (mw-fn handler opts) (mw-fn handler)) % identity nil))
 
 (deftest test-wrap-forwarded-scheme
   (let [handler (fn [req res raise]
@@ -46,7 +44,7 @@
 (deftest test-wrap-ssl-redirect
   (let [handler (mock-handler
                   ssl/wrap-ssl-redirect
-                  (fn [req res raise] (res (ok ""))))]
+                  (ok-response ""))]
     (testing "HTTP GET request"
       (let [response (handler (request :get "/"))]
         (is (= (:status response) 301))
@@ -65,7 +63,7 @@
 
   (let [handler (mock-handler
                   ssl/wrap-ssl-redirect
-                  (fn [req res raise] (res (ok "")))
+                  (ok-response "")
                   {:ssl-port 8443})]
     (testing "HTTP GET request with custom SSL port"
       (let [response (handler (request :get "/"))]
@@ -84,19 +82,19 @@
       (is (nil? response))))
 
   (testing "defaults"
-    (let [handler  (mock-handler ssl/wrap-hsts (fn [req res raise] (res (ok ""))))
+    (let [handler  (mock-handler ssl/wrap-hsts (ok-response ""))
           response (handler (request :get "/"))]
       (is (= (get-header response "strict-transport-security")
              "max-age=31536000; includeSubDomains"))))
 
   (testing "custom max-age"
-    (let [handler  (mock-handler ssl/wrap-hsts (fn [req res raise] (res (ok ""))) {:max-age 0})
+    (let [handler  (mock-handler ssl/wrap-hsts (ok-response "") {:max-age 0})
           response (handler (request :get "/"))]
       (is (= (get-header response "strict-transport-security")
              "max-age=0; includeSubDomains"))))
 
   (testing "don't include subdomains"
-    (let [handler  (mock-handler ssl/wrap-hsts (fn [req res raise] (res (ok ""))) {:include-subdomains? false})
+    (let [handler  (mock-handler ssl/wrap-hsts (ok-response "") {:include-subdomains? false})
           response (handler (request :get "/"))]
       (is (= (get-header response "strict-transport-security")
              "max-age=31536000")))))
