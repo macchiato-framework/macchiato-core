@@ -7,7 +7,8 @@
     [macchiato.test.flash]
     [macchiato.test.ssl]
     [macchiato.test.util.mime-type]
-    [macchiato.test.util.request]))
+    [macchiato.test.util.request]
+    [macchiato.test.util.response]))
 
 (doo-tests 'macchiato.test.anti-forgery
            'macchiato.test.content-type
@@ -15,4 +16,5 @@
            'macchiato.test.flash
            'macchiato.test.ssl
            'macchiato.test.util.mime-type
-           'macchiato.test.util.request)
+           'macchiato.test.util.request
+           'macchiato.test.util.response)

@@ -1,5 +1,6 @@
 (ns macchiato.util.response
-  (:require [cuerdas.core :as string]))
+  (:require
+    [cuerdas.core :as string]))
 
 (defn find-header
   "Looks up a header in a response (or request) case insensitively,
