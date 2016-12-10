@@ -64,9 +64,9 @@ re-value (str re-token "|" re-quoted))
             (let [t (type body)]
               (cond
                 (= t Keyword) :keyword
-                (= t js/String) :stting
+                (= t js/String) :string
                 (satisfies? ICollection body) :coll
-                nil :nil))))
+                nil? :nil))))
 
 (defmethod body-string :nil [_] nil)
 
@@ -81,3 +81,19 @@ re-value (str re-token "|" re-quoted))
   [request]
   (or (:path-info request)
       (:uri request)))
+
+(defn in-context?
+  "Returns true if the URI of the request is a subpath of the supplied context."
+  {:added "1.2"}
+  [request context]
+  (.startsWith (:uri request) context))
+
+(defn set-context
+  "Associate a context and path-info with the  request. The request URI must be
+  a subpath of the supplied context."
+  {:added "1.2"}
+  [request context]
+  {:pre [(in-context? request context)]}
+  (assoc request
+    :context context
+    :path-info (subs (:uri request) (.-length context))))

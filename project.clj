@@ -21,9 +21,7 @@
                        [url "0.11.0"]
                        [x-www-form-urlencode "0.1.1"]]}
   :profiles {:test
-             {:dependencies [[org.clojure/clojure "1.8.0"]
-                             [org.clojure/clojurescript "1.9.293"]]
-              :plugins      [[lein-cljsbuild "1.1.4"]
+             {:plugins      [[lein-cljsbuild "1.1.4"]
                              [lein-doo "0.1.7"]]
               :cljsbuild
                             {:builds
