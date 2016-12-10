@@ -1,4 +1,4 @@
-(ns macchiato.test.content-type
+(ns macchiato.test.middleware.content-type
   (:require
     [macchiato.middleware.content-type :as ct]
     [cljs.test :refer-macros [is are deftest testing use-fixtures]]))

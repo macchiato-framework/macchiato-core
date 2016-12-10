@@ -1,20 +1,22 @@
 (ns macchiato.runner
   (:require
     [doo.runner :refer-macros [doo-tests]]
-    [macchiato.test.anti-forgery]
-    [macchiato.test.content-type]
     [macchiato.test.core-test]
-    [macchiato.test.flash]
-    [macchiato.test.ssl]
+    [macchiato.test.middleware.anti-forgery]
+    [macchiato.test.middleware.content-type]
+    [macchiato.test.middleware.flash]
+    [macchiato.test.middleware.session]
+    [macchiato.test.middleware.ssl]
     [macchiato.test.util.mime-type]
     [macchiato.test.util.request]
     [macchiato.test.util.response]))
 
-(doo-tests 'macchiato.test.anti-forgery
-           'macchiato.test.content-type
-           'macchiato.test.core-test
-           'macchiato.test.flash
-           'macchiato.test.ssl
+(doo-tests 'macchiato.test.core-test
+           'macchiato.test.middleware.anti-forgery
+           'macchiato.test.middleware.content-type
+           'macchiato.test.middleware.flash
+           'macchiato.test.middleware.session
+           'macchiato.test.middleware.ssl
            'macchiato.test.util.mime-type
            'macchiato.test.util.request
            'macchiato.test.util.response)

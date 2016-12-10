@@ -1,4 +1,4 @@
-(ns macchiato.test.flash
+(ns macchiato.test.middleware.flash
   (:require
     [macchiato.middleware.flash :refer [wrap-flash]]
     [macchiato.test.mock.request :refer [header request]]

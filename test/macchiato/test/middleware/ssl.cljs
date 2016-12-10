@@ -1,4 +1,4 @@
-(ns macchiato.test.ssl
+(ns macchiato.test.middleware.ssl
   (:require
     [macchiato.middleware.ssl :as ssl]
     [macchiato.test.mock.util :refer [mock-handler ok-response]]

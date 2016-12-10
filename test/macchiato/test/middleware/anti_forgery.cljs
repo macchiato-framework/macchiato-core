@@ -1,4 +1,4 @@
-(ns macchiato.test.anti-forgery
+(ns macchiato.test.middleware.anti-forgery
   (:require
     [cuerdas.core :as string]
     [macchiato.middleware.anti-forgery :as af]
