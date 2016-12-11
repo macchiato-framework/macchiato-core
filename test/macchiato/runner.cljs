@@ -7,6 +7,7 @@
     [macchiato.test.middleware.flash]
     [macchiato.test.middleware.session]
     [macchiato.test.middleware.ssl]
+    [macchiato.test.middleware.x-headers]
     [macchiato.test.util.mime-type]
     [macchiato.test.util.request]
     [macchiato.test.util.response]))
@@ -18,5 +19,6 @@
            'macchiato.test.middleware.session
            'macchiato.test.middleware.ssl
            'macchiato.test.util.mime-type
+           'macchiato.test.middleware.x-headers
            'macchiato.test.util.request
            'macchiato.test.util.response)
