@@ -3,8 +3,8 @@
   :url "https://github.com/yogthos/macchiato-framework/macchiato-core"
   :scm {:name "git"
         :url  "https://github.com/macchiato-framework/macchiato-core.git"}
-  :license {:name "Eclipse Public License"
-            :url  "http://www.eclipse.org/legal/epl-v10.html"}
+  :license {:name "MIT License"
+            :url "http://opensource.org/licenses/MIT"}
   :clojurescript? true
   :dependencies [[funcool/cuerdas "2.0.1"]
                  [org.clojure/clojure "1.8.0" :scope "provided"]

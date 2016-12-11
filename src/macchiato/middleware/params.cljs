@@ -24,7 +24,6 @@
 
 (defn assoc-form-params
   "Parse and assoc parameters from the request body with the request."
-  {:added "1.2"}
   [request encoding]
   (merge-with merge request
               (if-let [body (and (req/urlencoded-form? request) (:body request))]

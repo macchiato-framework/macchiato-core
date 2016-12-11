@@ -28,7 +28,7 @@
      :body            (.-body req)
      :fresh?          (.-fresh req)
      :hostname        (-> req .-headers .-host (s/split #":") first)
-     :params          (js->clj (.-param req) :keywordize-keys true)
+     :params          (js->clj (.-param req))
      :protocol        (.-protocol req)
      :secure?         (.-secure req)
      :signed-cookies  (js->clj (.-signedCookies req))
