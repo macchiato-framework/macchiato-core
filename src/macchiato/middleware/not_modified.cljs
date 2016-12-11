@@ -5,12 +5,14 @@
     [macchiato.util.time :refer [parse-date]]
     [macchiato.util.response :refer [status get-header header]]))
 
+(def Stream (js/require "stream"))
+
 (defn- etag-match? [request response]
   (if-let [etag (get-header response "ETag")]
     (= etag (get-header request "if-none-match"))))
 
 (defn- date-header [response header]
-  (if-let [http-date (get-header response header)]
+  (when-let [http-date (get-header response header)]
     (parse-date http-date)))
 
 (defn- not-modified-since? [request response]
@@ -34,11 +36,12 @@
            (ok-response? response)
            (or (etag-match? request response)
                (not-modified-since? request response)))
-    (do (.close (:body response))
-        (-> response
-            (assoc :status 304)
-            (header "Content-Length" 0)
-            (assoc :body nil)))
+    (do
+      (when (instance? Stream (:body response)) (.close (:body response)))
+      (-> response
+          (assoc :status 304)
+          (header "Content-Length" 0)
+          (assoc :body nil)))
     response))
 
 (defn wrap-not-modified

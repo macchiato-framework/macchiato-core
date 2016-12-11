@@ -5,6 +5,7 @@
     [macchiato.test.middleware.anti-forgery]
     [macchiato.test.middleware.content-type]
     [macchiato.test.middleware.flash]
+    [macchiato.test.middleware.not-modified]
     [macchiato.test.middleware.session]
     [macchiato.test.middleware.ssl]
     [macchiato.test.middleware.x-headers]
@@ -16,6 +17,7 @@
            'macchiato.test.middleware.anti-forgery
            'macchiato.test.middleware.content-type
            'macchiato.test.middleware.flash
+           'macchiato.test.middleware.not-modified
            'macchiato.test.middleware.session
            'macchiato.test.middleware.ssl
            'macchiato.test.util.mime-type
