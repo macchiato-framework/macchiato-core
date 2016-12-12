@@ -8,14 +8,12 @@
 
 (def url-parser (js/require "url"))
 
-(defn req->map [req res opts]
+(defn req->map [req res {:keys [scheme] :as opts}]
   (let [conn         (.-connection req)
         url          (.parse url-parser (.-url req) true)
-        scheme       (if (boolean (.-encrypted conn)) :https :http)
         http-version (.-httpVersion req)
         headers      (js->clj (.-headers req))
         address      (js->clj (.address conn) :keywordize-keys true)]
-
     {:server-port     (:port address)
      :server-name     (:address address)
      :remote-addr     (.-remoteAddress conn)
@@ -106,11 +104,8 @@
       (.write (.-message error))
       (.end))))
 
-(defn handler [handler-fn & [opts]]
-  (let [opts         (merge {} opts)
-        http-handler (if-let [session-opts (:session opts)]
-                       (session/wrap-session handler-fn session-opts)
-                       handler-fn)]
+(defn handler [http-handler opts]
+  (let [opts (-> opts (update-in [:cookies :signed?] (fnil identity true)))]
     (fn [node-client-request node-server-response]
       (http-handler (req->map node-client-request node-server-response opts)
                     (response node-client-request node-server-response error-handler opts)
