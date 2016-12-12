@@ -2,7 +2,7 @@
   (:require
     [macchiato.cookies :as cookies]
     [macchiato.middleware.session :as session]
-    [clojure.string :as s]))
+    [cuerdas.core :as s]))
 
 (def Stream (js/require "stream"))
 
@@ -21,11 +21,11 @@
      :cookies         (cookies/request-cookies req res (:cookies opts))
      :content-type    (get headers "content-type")
      :content-length  (get headers "content-length")
-     :request-method  (keyword (s/lower-case (.-method req)))
+     :request-method  (keyword (s/lower (.-method req)))
      :url             (.-url req)
      :uri             (.-pathname url)
      :query-string    (when-let [query (.-search url)] (.substring query 1))
-     :body            (.-body req)
+     :body            req
      :fresh?          (.-fresh req)
      :hostname        (-> req .-headers .-host (s/split #":") first)
      :params          (js->clj (.-params req))

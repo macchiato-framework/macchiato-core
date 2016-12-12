@@ -3,6 +3,8 @@
 
 (def qs (js/require "qs"))
 
+(def concat-stream (js/require "concat-stream"))
+
 (defn decode [s]
   (js->clj (.parse qs s)))
 
@@ -12,7 +14,7 @@
 
 (defn assoc-query-params
   "Parse and assoc parameters from the query string with the request."
-  [request encoding]
+  [request]
   (merge-with merge request
               (if-let [query-string (:query-string request)]
                 (let [params (parse-params query-string)]
@@ -21,7 +23,7 @@
 
 (defn assoc-form-params
   "Parse and assoc parameters from the request body with the request."
-  [request encoding]
+  [request]
   (merge-with merge request
               (if-let [body (and (req/urlencoded-form? request) (:body request))]
                 (let [params (parse-params body)]
@@ -34,13 +36,12 @@
   ([request]
    (params-request request {}))
   ([request options]
-   (let [encoding (or (:encoding options) (req/character-encoding request) "UTF-8")
-         request  (if (:form-params request)
-                    request
-                    (assoc-form-params request encoding))]
+   (let [request (if (:form-params request)
+                   request
+                   (assoc-form-params request))]
      (if (:query-params request)
        request
-       (assoc-query-params request encoding)))))
+       (assoc-query-params request)))))
 
 (defn wrap-params
   "Middleware to parse urlencoded parameters from the query string and form
@@ -56,5 +57,14 @@
   ([handler]
    (wrap-params handler {}))
   ([handler options]
-   (fn [request respond raise]
-     (handler (params-request request options) respond raise))))
+   (fn [{:keys [body] :as request} respond raise]
+     (if (req/urlencoded-form? request)
+       (.pipe body
+              (let [encoding (or (:encoding options) (req/character-encoding request) "utf8")]
+                (concat-stream.
+                  (fn [body]
+                    (handler
+                      (params-request (assoc request :body (.toString body encoding)) options)
+                      respond
+                      raise)))))
+       (handler (params-request request options) respond raise)))))
