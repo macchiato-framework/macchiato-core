@@ -9,19 +9,21 @@
 (def url-parser (js/require "url"))
 
 (defn req->map [req res opts]
-  (let [conn    (.-connection req)
-        url     (.parse url-parser (.-url req))
-        headers (js->clj (.-headers req))
-        address (js->clj (.address conn) :keywordize-keys true)]
+  (let [conn         (.-connection req)
+        url          (.parse url-parser (.-url req) true)
+        scheme       (if (boolean (.-encrypted conn)) :https :http)
+        http-version (.-httpVersion req)
+        headers      (js->clj (.-headers req))
+        address      (js->clj (.address conn) :keywordize-keys true)]
 
     {:server-port     (:port address)
      :server-name     (:address address)
      :remote-addr     (.-remoteAddress conn)
      :headers         headers
      :cookies         (cookies/request-cookies req res (:cookies opts))
-     :content-type    (:content-type headers)
-     :content-length  (:content-length headers)
-     :method          (keyword (s/lower-case (.-method req)))
+     :content-type    (get headers "content-type")
+     :content-length  (get headers "content-length")
+     :request-method  (keyword (s/lower-case (.-method req)))
      :url             (.-url req)
      :uri             (.-pathname url)
      :query-string    (when-let [query (.-search url)] (.substring query 1))
@@ -29,13 +31,14 @@
      :fresh?          (.-fresh req)
      :hostname        (-> req .-headers .-host (s/split #":") first)
      :params          (js->clj (.-param req))
-     :protocol        (.-protocol req)
+     :protocol        (str (if (= :http scheme) "HTTP/" "HTTPS/") http-version)
      :secure?         (.-secure req)
      :signed-cookies  (js->clj (.-signedCookies req))
      :ssl-client-cert (when-let [peer-cert-fn (.-getPeerCertificate conn)] (peer-cert-fn))
      :stale?          (.-state req)
      :subdomains      (js->clj (.-subdomains req))
      :xhr?            (.-xhr req)
+     :scheme          scheme
      :node/request    req
      :node/response   res}))
 
@@ -104,10 +107,10 @@
       (.end))))
 
 (defn handler [handler-fn & [opts]]
-  (let [opts          (merge {} opts)
-        http-handler  (if-let [session-opts (:session opts)]
-                        (session/wrap-session handler-fn session-opts)
-                        handler-fn)]
+  (let [opts         (merge {} opts)
+        http-handler (if-let [session-opts (:session opts)]
+                       (session/wrap-session handler-fn session-opts)
+                       handler-fn)]
     (fn [node-client-request node-server-response]
       (http-handler (req->map node-client-request node-server-response opts)
                     (response node-client-request node-server-response error-handler opts)
