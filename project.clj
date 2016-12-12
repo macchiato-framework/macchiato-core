@@ -17,9 +17,9 @@
                        [cookies "0.6.2"]
                        [etag "1.7.0"]
                        [random-bytes "1.0.0"]
+                       [qs "6.3.0"]
                        [simple-encryptor "1.1.0"]
-                       [url "0.11.0"]
-                       [x-www-form-urlencode "0.1.1"]]}
+                       [url "0.11.0"]]}
   :profiles {:test
              {:plugins      [[lein-cljsbuild "1.1.4"]
                              [lein-doo "0.1.7"]]

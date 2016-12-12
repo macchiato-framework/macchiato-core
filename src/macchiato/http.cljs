@@ -10,7 +10,7 @@
 
 (defn req->map [req res {:keys [scheme] :as opts}]
   (let [conn         (.-connection req)
-        url          (.parse url-parser (.-url req) true)
+        url          (.parse url-parser (.-url req))
         http-version (.-httpVersion req)
         headers      (js->clj (.-headers req))
         address      (js->clj (.address conn) :keywordize-keys true)]
@@ -28,7 +28,7 @@
      :body            (.-body req)
      :fresh?          (.-fresh req)
      :hostname        (-> req .-headers .-host (s/split #":") first)
-     :params          (js->clj (.-param req))
+     :params          (js->clj (.-params req))
      :protocol        (str (if (= :http scheme) "HTTP/" "HTTPS/") http-version)
      :secure?         (.-secure req)
      :signed-cookies  (js->clj (.-signedCookies req))
@@ -110,3 +110,21 @@
       (http-handler (req->map node-client-request node-server-response opts)
                     (response node-client-request node-server-response error-handler opts)
                     (error-handler node-server-response)))))
+
+(defn ws-handler [handler websocket]
+  (let [upgrade-req (.-upgradeReq websocket)
+        url (.parse url-parser (.-url upgrade-req))
+        uri (.-pathname url)
+        query (.-search url)
+        query (if query (.substring query 1))
+        headers (js->clj (.-headers upgrade-req))
+        conn (.-connection upgrade-req)
+        address (js->clj (.address conn))]
+    (handler {:server-port (address "port")
+              :server-name (address "address")
+              :uri uri
+              :query-string query
+              :headers headers
+              :websocket websocket
+              :websocket? true
+              :request-method :get})))

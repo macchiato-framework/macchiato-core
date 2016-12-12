@@ -1,13 +1,10 @@
 (ns macchiato.middleware.params
   (:require [macchiato.util.request :as req]))
 
-(def xform (js/require "x-www-form-urlencode"))
-
-(defn encode [s]
-  (.encode xform s))
+(def qs (js/require "qs"))
 
 (defn decode [s]
-  (.decode xform s))
+  (js->clj (.parse qs s)))
 
 (defn- parse-params [params]
   (let [params (decode params)]
@@ -37,9 +34,7 @@
   ([request]
    (params-request request {}))
   ([request options]
-   (let [encoding (or (:encoding options)
-                      (req/character-encoding request)
-                      "UTF-8")
+   (let [encoding (or (:encoding options) (req/character-encoding request) "UTF-8")
          request  (if (:form-params request)
                     request
                     (assoc-form-params request encoding))]
