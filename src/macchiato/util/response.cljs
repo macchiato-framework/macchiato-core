@@ -1,6 +1,7 @@
 (ns macchiato.util.response
   (:require
-    [cuerdas.core :as string]))
+    [cuerdas.core :as string]
+    [macchiato.fs :as fs]))
 
 (defn find-header
   "Looks up a header in a response (or request) case insensitively,
@@ -51,14 +52,12 @@
   [resp status]
   (assoc resp :status status))
 
-(def fs (js/require "fs"))
-
 (defn file
   "accepts a path to a file, and returns a response with the body set to the file stream."
   [path]
   {:status  200
    :headers {}
-   :body    (.createReadStream fs path)})
+   :body    (fs/stream path)})
 
 (defn response?
   "True if the supplied value is a valid response map."

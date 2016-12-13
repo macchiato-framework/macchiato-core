@@ -1,12 +1,12 @@
 (ns macchiato.middleware.file
   (:require
     [cljs-time.core :refer [before?]]
+    [macchiato.fs :as fs]
     [macchiato.util.response :as res]
     [macchiato.util.mime-type :refer [ext-mime-type]]))
 
 (def Stream (js/require "stream"))
 (def etag (js/require "etag"))
-(def fs (js/require "fs"))
 
 (defn- guess-mime-type
   "Returns a String corresponding to the guessed mime type for the given file,
@@ -16,10 +16,10 @@
       "application/octet-stream"))
 
 (defn- file-stats [stream mime-types]
-  (let [stats (->> stream .-path (.statSync fs))]
+  (let [stats (->> stream .-path (fs/stat))]
     {:etag      (etag stats)
-     :lmodified (-> stats (aget "mtime") .getTime (js/Date.) .toUTCString)
-     :size      (aget stats "size")
+     :lmodified (-> stats :mtime .getTime (js/Date.) .toUTCString)
+     :size      (:size stats)
      :type      (guess-mime-type stream mime-types)}))
 
 (defn file-info-response

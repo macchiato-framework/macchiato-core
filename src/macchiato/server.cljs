@@ -1,5 +1,6 @@
 (ns macchiato.server
   (:require
+    [macchiato.fs :as fs]
     [macchiato.http :as http]))
 
 (def ws (js/require "ws"))
@@ -23,9 +24,8 @@
   :private-key - path to the private key
   :certificate - path to the certificate for the key"
   [{:keys [handler host port on-success private-key certificate] :as opts}]
-  (let [fs           (js/require "fs")
-        pk           (.readFileSync fs private-key)
-        pc           (.readFileSync fs certificate)
+  (let [pk           (fs/slurp private-key)
+        pc           (fs/slurp certificate)
         http-handler (http/handler handler (assoc opts :scheme :https))
         server       (.createServer (js/require "https") (clj->js {:key pk :cert pc}) http-handler)]
     (.listen server port host on-success)

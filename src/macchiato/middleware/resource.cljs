@@ -2,21 +2,18 @@
   "Middleware for serving static resources."
   (:require
     [cuerdas.core :as s]
+    [macchiato.fs :as fs]
     [macchiato.util.response :as resp]))
-
-(def fs (js/require "fs"))
 
 (defn file-exists? [path]
   (try
     (and
-      (.existsSync fs path)
-      (.isFile (.lstatSync fs path)))
+      (fs/exists? path)
+      (fs/file? path))
     (catch js/Error _)))
 
-(def path-separator (.-sep (js/require "path")))
-
 (defn uri->path [root-path uri]
-  (s/replace (str root-path (js/decodeURI uri)) #"/" path-separator))
+  (s/replace (str root-path (js/decodeURI uri)) #"/" fs/path-separator))
 
 (defn wrap-resource
   "Middleware that first checks to see whether the request map matches a static resource."
