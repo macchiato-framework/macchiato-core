@@ -4,13 +4,15 @@
   :scm {:name "git"
         :url  "https://github.com/macchiato-framework/macchiato-core.git"}
   :license {:name "MIT License"
-            :url "http://opensource.org/licenses/MIT"}
+            :url  "http://opensource.org/licenses/MIT"}
   :clojurescript? true
-  :dependencies [[funcool/cuerdas "2.0.1"]
+  :dependencies [[com.andrewmcveigh/cljs-time "0.4.0"]
+                 [funcool/cuerdas "2.0.1"]
+                 [macchiato/fs "0.0.3"]
                  [org.clojure/clojure "1.8.0" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.293" :scope "provided"]
-                 [com.andrewmcveigh/cljs-time "0.4.0"]]
-  :plugins [[codox "0.6.4"]
+                 [org.clojure/clojurescript "1.9.293" :scope "provided"]]
+  :plugins [[lein-cljsbuild "1.1.4"]
+            [codox "0.6.4"]
             [lein-doo "0.1.7"]
             [lein-npm "0.6.2"]]
   :npm {:dependencies [[concat-stream "1.5.2"]
@@ -23,19 +25,17 @@
                        [url "0.11.0"]
                        [ws "1.1.1"]]}
   :profiles {:test
-             {:plugins      [[lein-cljsbuild "1.1.4"]
-                             [lein-doo "0.1.7"]]
-              :cljsbuild
-                            {:builds
-                             {:test
-                              {:source-paths ["src" "test"]
-                               :compiler     {:main          macchiato.runner
-                                              :output-to     "target/test/core.js"
-                                              :target        :nodejs
-                                              :optimizations :none
-                                              :source-map    true
-                                              :pretty-print  true}}}}
-              :doo          {:build "test"}}}
+             {:cljsbuild
+                   {:builds
+                    {:test
+                     {:source-paths ["src" "test"]
+                      :compiler     {:main          macchiato.runner
+                                     :output-to     "target/test/core.js"
+                                     :target        :nodejs
+                                     :optimizations :none
+                                     :source-map    true
+                                     :pretty-print  true}}}}
+              :doo {:build "test"}}}
   :aliases
   {"test"
    ["do"
