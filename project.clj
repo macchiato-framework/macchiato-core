@@ -1,4 +1,4 @@
-(defproject macchiato/core "0.0.6"
+(defproject macchiato/core "0.0.7"
   :description "core Macchiato HTTP library"
   :url "https://github.com/yogthos/macchiato-framework/macchiato-core"
   :scm {:name "git"
@@ -20,7 +20,8 @@
                        [random-bytes "1.0.0"]
                        [qs "6.3.0"]
                        [simple-encryptor "1.1.0"]
-                       [url "0.11.0"]]}
+                       [url "0.11.0"]
+                       [ws "1.1.1"]]}
   :profiles {:test
              {:plugins      [[lein-cljsbuild "1.1.4"]
                              [lein-doo "0.1.7"]]

@@ -59,12 +59,14 @@
   ([handler options]
    (fn [{:keys [body] :as request} respond raise]
      (if (req/urlencoded-form? request)
-       (.pipe body
-              (let [encoding (or (:encoding options) (req/character-encoding request) "utf8")]
-                (concat-stream.
-                  (fn [body]
-                    (handler
-                      (params-request (assoc request :body (.toString body encoding)) options)
-                      respond
-                      raise)))))
+       (if (string? body)
+         (handler (params-request request options) respond raise)
+         (.pipe body
+                (let [encoding (or (:encoding options) (req/character-encoding request) "utf8")]
+                  (concat-stream.
+                    (fn [body]
+                      (handler
+                        (params-request (assoc request :body (.toString body encoding)) options)
+                        respond
+                        raise))))))
        (handler (params-request request options) respond raise)))))

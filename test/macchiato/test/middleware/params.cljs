@@ -16,6 +16,13 @@
     (is (empty? (:form-params resp)))
     (is (= {"foo" "bar" "biz" "bat%"} (:params resp)))))
 
+(def readable (.-Readable (js/require "stream")))
+
+(defn str->stream [s]
+  (doto (doto (readable.))
+    (.push s)
+    (.push nil)))
+
 (deftest wrap-params-query-and-form-params
   (let [req  {:query-string "foo=bar"
               :headers      {"content-type" "application/x-www-form-urlencoded"}
