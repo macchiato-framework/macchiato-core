@@ -7,6 +7,7 @@
             :url  "http://opensource.org/licenses/MIT"}
   :clojurescript? true
   :dependencies [[com.andrewmcveigh/cljs-time "0.4.0"]
+                 [com.cognitect/transit-cljs "0.8.239"]
                  [funcool/cuerdas "2.0.1"]
                  [macchiato/fs "0.0.3"]
                  [org.clojure/clojure "1.8.0" :scope "provided"]
@@ -15,7 +16,9 @@
             [codox "0.6.4"]
             [lein-doo "0.1.7"]
             [lein-npm "0.6.2"]]
-  :npm {:dependencies [[concat-stream "1.5.2"]
+  :npm {:dependencies [[accepts "1.3.3"]
+                       [concat-stream "1.5.2"]
+                       [content-type "1.0.2"]
                        [cookies "0.6.2"]
                        [etag "1.7.0"]
                        [multiparty "4.1.2"]
