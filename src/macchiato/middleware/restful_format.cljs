@@ -12,7 +12,7 @@
    "application/transit" :transit})
 
 (def default-accept-types
-  [:json :transit])
+  ["application/transit" :json])
 
 (defmulti parse-request-content :type)
 

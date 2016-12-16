@@ -1,5 +1,7 @@
 (ns macchiato.middleware.multipart-params
-  (:require [macchiato.util.request :as req]))
+  (:require
+    [macchiato.middleware.nested-params :as np]
+    [macchiato.util.request :as req]))
 
 ;; https://www.npmjs.com/package/multiparty
 (def multiparty (js/require "multiparty"))
@@ -13,29 +15,51 @@
   (clj->js
     (merge
       {:autoFields true
-       :autoFiles true}
+       :autoFiles  true}
       (when encoding {:encoding encoding})
       (when max-fields-size {:maxFieldsSize max-fields-size})
       (when max-fields {:maxFields max-fields})
       (when max-files-size {:maxFilesSize max-files-size})
       (when upload-dir {:uploadDir upload-dir}))))
 
+(defn- parse-params [fields]
+  (np/nest-params
+    (reduce
+      (fn [params k]
+        (assoc params [k] (js->clj (aget fields k))))
+      {} (js/Object.keys fields))
+    identity))
+
+(defn- parse-file-param [file-param]
+  (let [{:keys [originalFilename path size headers]} (js->clj file-param :keywordize-keys true)]
+    {:filename     originalFilename
+     :tempfile     path
+     :size         size
+     :content-type (:content-type headers)}))
+
+(defn- parse-file-params [files]
+  (reduce
+    (fn [params k]
+      (assoc params k (map parse-file-param (aget files k))))
+    {} (js/Object.keys files)))
+
 (defn- multipart-request [handler request respond raise {:keys [progress-fn] :as opts}]
-  (let [form (if opts
-               (.form multiparty (parse-opts opts))
-               (.form multiparty))]
+  (let [form (multiparty.Form. (parse-opts opts))]
     (when progress-fn
       (.on form "progress" progress-fn))
     (.parse form (:body request)
             (fn [err fields files]
-              (if err
-                (raise err)
-                (handler
-                  (assoc request
-                    :fields fields
-                    :files files)
-                  respond
-                  raise))))))
+              (let [params (merge
+                             (parse-file-params files)
+                             (parse-params fields))]
+                (if err
+                  (raise err)
+                  (handler
+                    (assoc request
+                      :multipart-params params
+                      :params params)
+                    respond
+                    raise)))))))
 
 (defn wrap-multipart
   ":encoding - sets encoding for the incoming form fields. Defaults to utf8.
@@ -47,6 +71,6 @@
   [handler & [opts]]
   (fn [request respond raise]
     (if (multipart-form? request)
-      (let [opts (update opts :encoding (or (:encoding opts) (req/character-encoding request) "utf8"))]
+      (let [opts (assoc opts :encoding (or (:encoding opts) (req/character-encoding request) "utf8"))]
         (multipart-request handler request respond raise opts))
       (handler request respond raise))))
