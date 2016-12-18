@@ -57,7 +57,7 @@
   [path]
   {:status  200
    :headers {}
-   :body    (fs/stream path)})
+   :body    (fs/read-stream path)})
 
 (defn response?
   "True if the supplied value is a valid response map."
