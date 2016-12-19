@@ -43,7 +43,10 @@
        request
        (assoc-query-params request)))))
 
-(defn wrap-params
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-params}}
+  wrap-params
   "Middleware to parse urlencoded parameters from the query string and form
   body (if the request is a url-encoded form). Adds the following keys to
   the request map:
@@ -70,3 +73,4 @@
                         respond
                         raise))))))
        (handler (params-request request options) respond raise)))))
+

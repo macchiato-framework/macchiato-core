@@ -5,6 +5,7 @@
     [macchiato.test.middleware.anti-forgery]
     [macchiato.test.middleware.content-type]
     [macchiato.test.middleware.flash]
+    [macchiato.test.middleware.middleware-meta]
     [macchiato.test.middleware.not-modified]
     [macchiato.test.middleware.params]
     [macchiato.test.middleware.session]
@@ -18,6 +19,7 @@
            'macchiato.test.middleware.anti-forgery
            'macchiato.test.middleware.content-type
            'macchiato.test.middleware.flash
+           'macchiato.test.middleware.middleware-meta
            'macchiato.test.middleware.not-modified
            'macchiato.test.middleware.params
            'macchiato.test.middleware.session

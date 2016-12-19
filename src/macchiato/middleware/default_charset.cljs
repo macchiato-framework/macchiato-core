@@ -22,7 +22,10 @@
         response)
       response)))
 
-(defn wrap-default-charset
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-default-charset}}
+  wrap-default-charset
   "Middleware that adds a charset to the content-type header of the response if
   one was not set by the handler."
   [handler charset]

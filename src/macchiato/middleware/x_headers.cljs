@@ -25,7 +25,10 @@
   [response frame-options]
   (some-> response (resp/header "X-Frame-Options" (format-frame-options frame-options))))
 
-(defn wrap-frame-options
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-frame-options}}
+  wrap-frame-options
   "Middleware that adds the X-Frame-Options header to the response. This governs
   whether your site can be rendered in a <frame>, <iframe> or <object>, and is
   typically used to prevent clickjacking attacks.
@@ -49,7 +52,10 @@
   [response content-type-options]
   (some-> response (resp/header "X-Content-Type-Options" (name content-type-options))))
 
-(defn wrap-content-type-options
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-content-type-options}}
+  wrap-content-type-options
   "Middleware that adds the X-Content-Type-Options header to the response. This
   currently only accepts one option:
   :nosniff - prevent resources with invalid media types being loaded as
@@ -68,7 +74,10 @@
    (some-> response
            (resp/header "X-XSS-Protection" (format-xss-protection enable? options)))))
 
-(defn wrap-xss-protection
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-xss-protection}}
+  wrap-xss-protection
   "Middleware that adds the X-XSS-Protection header to the response. This header
   enables a heuristic filter in browsers for detecting cross-site scripting
   attacks. Usually on by default.

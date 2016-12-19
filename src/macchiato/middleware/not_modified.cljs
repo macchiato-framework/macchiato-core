@@ -44,7 +44,10 @@
           (assoc :body nil)))
     response))
 
-(defn wrap-not-modified
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-not-modified}}
+  wrap-not-modified
   "Middleware that returns a 304 Not Modified from the wrapped handler if the
   handler response has an ETag or Last-Modified header, and the request has a
   If-None-Match or If-Modified-Since header that matches the response."

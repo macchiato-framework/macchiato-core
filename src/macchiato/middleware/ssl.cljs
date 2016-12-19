@@ -23,7 +23,10 @@
        (assoc request :scheme (keyword scheme))
        request))))
 
-(defn wrap-forwarded-scheme
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-forwarded-scheme}}
+  wrap-forwarded-scheme
   "Middleware that changes the :scheme of the request map to the value present
   in a request header. This is useful if your application sits behind a
   reverse proxy or load balancer that handles the SSL transport.
@@ -62,7 +65,10 @@
   (-> (resp/found (https-url (req/request-url request) (:ssl-port options)))
       (resp/status (if (get-request? request) 301 307))))
 
-(defn wrap-ssl-redirect
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-ssl-redirect}}
+  wrap-ssl-redirect
   "Middleware that redirects any HTTP request to the equivalent HTTPS URL.
 
   Accepts the following options:
@@ -92,7 +98,10 @@
   ([response options]
    (some-> response (resp/header "Strict-Transport-Security" (build-hsts-header options)))))
 
-(defn wrap-hsts
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-hsts}}
+  wrap-hsts
   "Middleware that adds the Strict-Transport-Security header to the response
   from the handler. This ensures the browser will only use HTTPS for future
   requests to the domain.

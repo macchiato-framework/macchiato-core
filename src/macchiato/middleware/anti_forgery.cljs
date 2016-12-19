@@ -62,7 +62,11 @@
   (or (:error-handler options)
       (constant-handler (:error-response options default-error-response))))
 
-(defn wrap-anti-forgery
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-anti-forgery
+     :required [:wrap-session]}}
+  wrap-anti-forgery
   "Middleware that prevents CSRF attacks. Any POST request to the handler
   returned by this function must contain a valid anti-forgery token, or else an
   access-denied response is returned.

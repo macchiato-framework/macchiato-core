@@ -17,7 +17,10 @@ exception that a response to a HEAD request should have an empty body.")
     (assoc response :body nil)
     response))
 
-(defn wrap-head
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-head}}
+  wrap-head
   "Middleware that turns any HEAD request into a GET, and then sets the response
   body to nil."
   [handler]

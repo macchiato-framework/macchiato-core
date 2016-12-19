@@ -53,7 +53,10 @@
    (fn [response-map]
      (some-> response-map (bare-session-response request options) response))))
 
-(defn wrap-session
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-session}}
+  wrap-session
   ([handler]
    (wrap-session handler {}))
   ([handler options]

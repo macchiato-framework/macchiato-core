@@ -26,7 +26,11 @@ next request in the same session.")
           (assoc response :session session)
           response)))))
 
-(defn wrap-flash
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-flash
+     :required [:wrap-session]}}
+  wrap-flash
   "If a :flash key is set on the response by the handler, a :flash key with
   the same value will be set on the next request that shares the same session.
   This is useful for small messages that persist across redirects."

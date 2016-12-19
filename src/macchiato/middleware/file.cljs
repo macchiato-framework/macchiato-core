@@ -42,7 +42,10 @@
            (-> response (res/header "Content-Length" size))))
        response))))
 
-(defn wrap-file
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-file}}
+  wrap-file
   "Wrap a handler such that responses with a file for a body will have
   corresponding Content-Type, Content-Length, and Last Modified headers added if
   they can be determined from the file.

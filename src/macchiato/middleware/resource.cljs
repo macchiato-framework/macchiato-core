@@ -15,7 +15,10 @@
 (defn uri->path [root-path uri]
   (s/replace (str root-path (js/decodeURI uri)) #"/" fs/path-separator))
 
-(defn wrap-resource
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-resource}}
+  wrap-resource
   "Middleware that first checks to see whether the request map matches a static resource."
   [handler root-path & [opts]]
   (fn [{:keys [uri] :as request} respond raise]

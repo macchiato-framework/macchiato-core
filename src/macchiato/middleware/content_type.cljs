@@ -14,7 +14,10 @@
        (let [mime-type (ext-mime-type (:uri request) (:mime-types options))]
          (content-type response (or mime-type "text/plain")))))))
 
-(defn wrap-content-type
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-content-type}}
+  wrap-content-type
   "Middleware that adds a content-type header to the response if one is not
   set by the handler. Uses the macchiato.util.mime-type/ext-mime-type function to
   guess the content-type from the file extension in the URI. If no

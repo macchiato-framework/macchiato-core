@@ -44,7 +44,10 @@
     (update response :body #(parse-response-content {:type accept-type :body %}))
     response))
 
-(defn wrap-restful-format
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-restful-format}}
+  wrap-restful-format
   [handler & [{:keys [content-types accept-types keywordize?]}]]
   (let [content-types (or content-types default-content-types)
         accept-types  (clj->js (or accept-types default-accept-types))]

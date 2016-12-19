@@ -71,7 +71,11 @@
    (let [parse (:key-parser options parse-nested-keys)]
      (update-in request [:params] nest-params parse))))
 
-(defn wrap-nested-params
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-nested-params
+     :required [:wrap-params]}}
+  wrap-nested-params
   "Middleware to converts a flat map of parameters into a nested map.
   Accepts the following options:
   :key-parser - the function to use to parse the parameter names into a list

@@ -57,7 +57,7 @@
           {:arglists '([request body-value])}
           (fn [request x] (type x)))
 
-(defmethod body string [request s]
+(defmethod body js/String [request s]
   (assoc request :body s))
 
 (defmethod body PersistentHashMap [request params]

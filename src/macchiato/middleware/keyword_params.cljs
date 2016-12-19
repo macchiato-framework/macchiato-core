@@ -23,7 +23,11 @@
   [request]
   (update-in request [:params] keyify-params))
 
-(defn wrap-keyword-params
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-keyword-params
+     :required [:wrap-params]}}
+  wrap-keyword-params
   "Middleware that converts the any string keys in the :params map to keywords.
   Only keys that can be turned into valid keywords are converted.
   This middleware does not alter the maps under :*-params keys. These are left

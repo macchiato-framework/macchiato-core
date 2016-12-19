@@ -61,7 +61,10 @@
                     respond
                     raise)))))))
 
-(defn wrap-multipart
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-multi-part}}
+  wrap-multipart
   ":encoding - sets encoding for the incoming form fields. Defaults to utf8.
   :max-fields-size - Limits the amount of memory all fields (not files) can allocate in bytes. If this value is exceeded, an error event is emitted. The default size is 2MB.
   :max-fields - Limits the number of fields that will be parsed before emitting an error event. A file counts as a field in this case. Defaults to 1000.

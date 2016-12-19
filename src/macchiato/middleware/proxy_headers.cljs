@@ -10,7 +10,10 @@
       (assoc request :remote-addr remote-addr))
     request))
 
-(defn wrap-forwarded-remote-addr
+(defn
+  ^{:macchiato/middleware
+    {:id :wrap-forwarded-remote-addr}}
+  wrap-forwarded-remote-addr
   "Middleware that changes the :remote-addr of the request map to the
   last value present in the X-Forwarded-For header."
   [handler]
