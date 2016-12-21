@@ -4,6 +4,8 @@
 
 Macchiato Core implements core Ring 1.6 async handlers and middleware on top of Node.js. The API is kept same as the original Ring API whenever possible.
 
+### [API Documentation](https://macchiato-framework.github.io/core/index.html)
+
 Available middleware:
 
 * anti-forgery
