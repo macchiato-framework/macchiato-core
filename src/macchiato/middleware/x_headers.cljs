@@ -13,8 +13,8 @@
     (str "ALLOW-FROM " (:allow-from frame-options))
     (str/upper (name frame-options))))
 
-(defn- format-xss-protection [enable? options]
-  (str (if enable? "1" "0") (if options "; mode=block")))
+(defn- format-xss-protection [enable? mode]
+  (str (if enable? "1" "0") (if (= :block mode) "; mode=block")))
 
 (defn- wrap-x-header [handler header-name header-value]
   (fn [request respond raise]
@@ -81,12 +81,10 @@
   "Middleware that adds the X-XSS-Protection header to the response. This header
   enables a heuristic filter in browsers for detecting cross-site scripting
   attacks. Usually on by default.
-  The enable? attribute determines whether the filter should be turned on.
-  Accepts one additional option:
+  The :enable? key determines whether the filter should be turned on.
   :mode - currently accepts only :block
   See: http://msdn.microsoft.com/en-us/library/dd565647(v=vs.85).aspx"
-  ([handler enable?]
-   (wrap-xss-protection handler enable? nil))
-  ([handler enable? options]
-   {:pre [(or (nil? options) (= options {:mode :block}))]}
-   (wrap-x-header handler "X-XSS-Protection" (format-xss-protection enable? options))))
+  ([handler]
+   (wrap-xss-protection handler {:enable? true}))
+  ([handler {:keys [enable? mode]}]
+   (wrap-x-header handler "X-XSS-Protection" (format-xss-protection enable? mode))))

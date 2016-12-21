@@ -86,7 +86,7 @@
 (deftest test-wrap-xss-protection
          (let [handle-hello (ok-response "hello")]
            (testing "enable"
-                    (let [handler (mock-handler wrap-xss-protection handle-hello true)
+                    (let [handler (mock-handler wrap-xss-protection handle-hello)
                           resp    (handler (request :get "/"))]
                       (is (= (:headers resp) {"X-XSS-Protection" "1"}))))
 
@@ -114,7 +114,7 @@
                                  (wrap-xss-protection handle-hello true {:mode :blob}))))
 
            (testing "nil response"
-                    (let [handler (mock-handler wrap-xss-protection (raw-response nil) true)]
+                    (let [handler (mock-handler wrap-xss-protection (raw-response nil))]
                       (is (nil? (handler (request :get "/"))))))))
 
 (deftest test-xss-protection-response
