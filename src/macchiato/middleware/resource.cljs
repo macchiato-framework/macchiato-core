@@ -3,6 +3,7 @@
   (:require
     [cuerdas.core :as s]
     [macchiato.fs :as fs]
+    [macchiato.fs.path :as path]
     [macchiato.util.response :as resp]))
 
 (defn file-exists? [path]
@@ -13,7 +14,7 @@
     (catch js/Error _)))
 
 (defn uri->path [root-path uri]
-  (s/replace (str root-path (js/decodeURI uri)) #"/" fs/path-separator))
+  (s/replace (str root-path (js/decodeURI uri)) #"/" path/separator))
 
 (defn
   ^{:macchiato/middleware
