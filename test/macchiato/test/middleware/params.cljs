@@ -1,5 +1,6 @@
 (ns macchiato.test.middleware.params
   (:require
+    [cljs.nodejs :as node]
     [macchiato.middleware.params :refer [wrap-params]]
     [macchiato.test.mock.request :refer [header request]]
     [macchiato.test.mock.util :refer [mock-handler raw-response ok-response]]
@@ -16,7 +17,7 @@
     (is (empty? (:form-params resp)))
     (is (= {"foo" "bar" "biz" "bat%"} (:params resp)))))
 
-(def readable (.-Readable (js/require "stream")))
+(def readable (.-Readable (node/require "stream")))
 
 (defn str->stream [s]
   (doto (doto (readable.))

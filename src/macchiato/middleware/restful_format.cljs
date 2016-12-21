@@ -1,11 +1,13 @@
 (ns macchiato.middleware.restful-format
-  (:require [cognitect.transit :as t]))
+  (:require
+    [cljs.nodejs :as node]
+    [cognitect.transit :as t]))
 
-(def concat-stream (js/require "concat-stream"))
+(def concat-stream (node/require "concat-stream"))
 
-(def accepts (js/require "accepts"))
+(def accepts (node/require "accepts"))
 
-(def ct (js/require "content-type"))
+(def ct (node/require "content-type"))
 
 (def default-content-types
   {"application/json"    :json

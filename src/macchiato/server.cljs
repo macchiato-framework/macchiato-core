@@ -1,9 +1,10 @@
 (ns macchiato.server
   (:require
+    [cljs.nodejs :as node]
     [macchiato.fs :as fs]
     [macchiato.http :as http]))
 
-(def ws (js/require "ws"))
+(def ws (node/require "ws"))
 
 (defn- http-server
   ":host - hostname to bind
@@ -12,7 +13,7 @@
   :on-success - success callback that's called when server starts listening"
   [{:keys [handler host port on-success websockets?] :as opts}]
   (let [http-handler (http/handler handler (assoc opts :scheme :http))
-        server       (.createServer (js/require "http") http-handler)]
+        server       (.createServer (node/require "http") http-handler)]
     (.listen server port host on-success)
     server))
 
@@ -27,7 +28,7 @@
   (let [pk           (fs/slurp private-key)
         pc           (fs/slurp certificate)
         http-handler (http/handler handler (assoc opts :scheme :https))
-        server       (.createServer (js/require "https") (clj->js {:key pk :cert pc}) http-handler)]
+        server       (.createServer (node/require "https") (clj->js {:key pk :cert pc}) http-handler)]
     (.listen server port host on-success)
     server))
 

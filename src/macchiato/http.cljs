@@ -1,12 +1,13 @@
 (ns macchiato.http
   (:require
+    [cuerdas.core :as s]
     [macchiato.cookies :as cookies]
     [macchiato.middleware.session :as session]
-    [cuerdas.core :as s]))
+    [cljs.nodejs :as node]))
 
-(def Stream (js/require "stream"))
+(def Stream (node/require "stream"))
 
-(def url-parser (js/require "url"))
+(def url-parser (node/require "url"))
 
 (defn req->map [req res {:keys [scheme] :as opts}]
   (let [conn         (.-connection req)

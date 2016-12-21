@@ -1,10 +1,11 @@
 (ns macchiato.middleware.ssl
   "Middleware for managing handlers operating over HTTPS."
-  (:require [macchiato.util.response :as resp]
-            [macchiato.util.request :as req]
-            [clojure.string :as str]))
+  (:require [cljs.nodejs :as node]
+            [clojure.string :as str]
+            [macchiato.util.response :as resp]
+            [macchiato.util.request :as req]))
 
-(def url (js/require "url"))
+(def url (node/require "url"))
 
 (def default-scheme-header
   "The default header used in wrap-forwarded-scheme (x-forwarded-proto)."

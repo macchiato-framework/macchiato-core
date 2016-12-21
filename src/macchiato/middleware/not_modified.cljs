@@ -1,11 +1,12 @@
 (ns macchiato.middleware.not-modified
   "Middleware that returns a 304 Not Modified response for responses with Last-Modified headers."
   (:require
+    [cljs.nodejs :as node]
     [cljs-time.core :refer [before?]]
     [macchiato.util.time :refer [parse-date]]
     [macchiato.util.response :refer [status get-header header]]))
 
-(def Stream (js/require "stream"))
+(def Stream (node/require "stream"))
 
 (defn- etag-match? [request response]
   (if-let [etag (get-header response "ETag")]
