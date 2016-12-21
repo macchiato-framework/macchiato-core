@@ -29,9 +29,13 @@
      :required [:bar]}}
   baz [handler] handler)
 
+(defn no-meta [handler] handler)
+
 (defn handler [_ _ _])
 
 (deftest meta-test
+  (testing "default metadata"
+    (is (= (meta (m/wrap handler #'no-meta)) {:macchiato/middleware [{:id :no-meta}]})))
   (testing "missing middleware"
     (try
       (m/wrap-middleware

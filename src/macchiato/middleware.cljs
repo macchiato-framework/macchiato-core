@@ -37,15 +37,17 @@
    (wrap handler middleware-fn nil))
   ([handler middleware-fn opts]
    (let [handler-middleware (middleware-from-handler handler)
-         middleware-meta    (-> middleware-fn meta :macchiato/middleware)]
-     (if (loaded? handler-middleware middleware-meta)
+         middleware-meta    (meta middleware-fn)
+         middleware-info    (or (:macchiato/middleware middleware-meta)
+                                {:id (keyword (:name middleware-meta))})]
+     (if (loaded? handler-middleware middleware-info)
        handler
        (update-middleware-meta
          (if opts
            (middleware-fn handler opts)
            (middleware-fn handler))
          handler-middleware
-         middleware-meta)))))
+         middleware-info)))))
 
 (defn- middleware-id [middleware]
   (-> (if (coll? middleware) (first middleware) middleware) meta :macchiato/middleware))
