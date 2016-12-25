@@ -52,6 +52,6 @@
 
 (defn start-ws
   "starts a WebSocket server given a handler and a Node server instance"
-  [handler server]
+  [server handler]
   (let [wss (ws.Server. #js{:server server})]
     (.on wss "connection" #(http/ws-handler handler %))))
