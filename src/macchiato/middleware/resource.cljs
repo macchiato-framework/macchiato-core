@@ -21,7 +21,7 @@
     {:id :wrap-resource}}
   wrap-resource
   "Middleware that first checks to see whether the request map matches a static resource."
-  [handler root-path & [opts]]
+  [handler root-path]
   (fn [{:keys [uri] :as request} respond raise]
     (let [path (uri->path root-path uri)]
       (if (and (#{:head :get} (:request-method request)) (file-exists? path))
