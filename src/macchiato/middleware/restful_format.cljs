@@ -10,18 +10,20 @@
 (def ct (node/require "content-type"))
 
 (def default-content-types
-  {"application/json"    :json
-   "application/transit" :transit})
+  #{"application/json"
+    "application/transit"})
 
 (def default-accept-types
   ["application/transit" :json])
 
 (defmulti parse-request-content :type)
 
-(defmethod parse-request-content :json [{:keys [charset body keywordize?]}]
+(defmethod parse-request-content "application/json"
+  [{:keys [charset body keywordize?]}]
   (js->clj (js/JSON.parse body charset) :keywordize-keys keywordize?))
 
-(defmethod parse-request-content :transit [{:keys [charset body keywordize?]}]
+(defmethod parse-request-content "application/transit"
+  [{:keys [charset body keywordize?]}]
   (t/read (t/reader :json) body))
 
 (defmulti parse-response-content :type)
@@ -34,7 +36,7 @@
 
 (defn infer-request-content-type [headers content-types]
   (let [content-type (.parse ct (get headers "content-type"))]
-    (when-let [type (content-types (.-type content-type))]
+    (when-let [type (get content-types (.-type content-type))]
       {:type    type
        :charset (or (.-charset content-type) "utf8")})))
 
@@ -50,6 +52,13 @@
   ^{:macchiato/middleware
     {:id :wrap-restful-format}}
   wrap-restful-format
+  "attempts to infer the request content type using the content-type header
+   serializes the response based on the first known accept header
+
+   optional keys:
+   :content-types a set of strings matching the content types
+   :accept-types a vector of accept types to match in the desired order
+   :keywordize? a boolean specifying whether to keywordized parsed request"
   [handler & [{:keys [content-types accept-types keywordize?]}]]
   (let [content-types (or content-types default-content-types)
         accept-types  (clj->js (or accept-types default-accept-types))]
