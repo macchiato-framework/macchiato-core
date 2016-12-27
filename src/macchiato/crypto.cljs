@@ -2,8 +2,8 @@
   (:require
     [cljs.nodejs :as node]))
 
-(def crypto (node/require "crypto"))
-(def encryptor (node/require "simple-encryptor"))
+(def ^:no-doc crypto (node/require "crypto"))
+(def ^:no-doc encryptor (node/require "simple-encryptor"))
 
 (defn encrypt [key data]
   (.encrypt (encryptor. key) data))
@@ -24,5 +24,7 @@
       (zero? (reduce bit-or (map bit-xor a b)))
       false)))
 
-(defn random-base64 [n]
+(defn random-base64
+  "generates a random base64 string of length n"
+  [n]
   (-> (.randomBytes crypto n) (.toString "base64")))

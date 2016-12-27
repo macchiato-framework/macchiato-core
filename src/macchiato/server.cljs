@@ -4,9 +4,9 @@
     [macchiato.fs :as fs]
     [macchiato.http :as http]))
 
-(def ws (node/require "ws"))
+(def ^:no-doc ws (node/require "ws"))
 
-(defn- http-server
+(defn http-server
   ":host - hostname to bind
   :port - HTTP port the server will listen on
   :handler - Macchiato handler function for handling request/response

@@ -2,11 +2,11 @@
   (:require
     [cljs.nodejs :as node]))
 
-(def Cookies (node/require "cookies"))
+(def ^:no-doc Cookies (node/require "cookies"))
 
-(def random-bytes (node/require "random-bytes"))
+(def ^:no-doc random-bytes (node/require "random-bytes"))
 
-(def secret (str (random-bytes. 32)))
+(def ^:no-doc secret (str (random-bytes. 32)))
 
 (def ^{:doc "HTTP token: 1*<any CHAR except CTLs or tspecials>. See RFC2068"} re-token #"[!#$%&'*\-+.0-9A-Z\^_`a-z\|~]+")
 
@@ -35,7 +35,7 @@
   (-serialize-cookie [cookie]
     (-> cookie clj->js js/JSON.stringify)))
 
-(defn translate-cookie-opts [{:keys [secure max-age expires http-only path domain overwrite?]}]
+(defn- translate-cookie-opts [{:keys [secure max-age expires http-only path domain overwrite?]}]
   (clj->js
     (merge
       (when secure {:signed true})
@@ -46,18 +46,18 @@
       (when http-only {:http-only http-only})
       (when overwrite? {:overwrite overwrite?}))))
 
-(defn gen-keys [cookie-opts]
+(defn- gen-keys [cookie-opts]
   (clj->js {:keys (or (:keys cookie-opts) [secret])}))
 
-(defn signed [opts]
+(defn- signed [opts]
   (clj->js {:signed (boolean (:signed? opts))}))
 
-(defn set-cookies [cookies req res cookie-opts]
+(defn ^:no-doc set-cookies [cookies req res cookie-opts]
   (let [cookie-manager (Cookies. req res (clj->js (gen-keys cookie-opts)))]
     (doseq [[k {:keys [value] :as opts}] cookies]
       (.set cookie-manager (name k) (-serialize-cookie value) (translate-cookie-opts opts)))))
 
-(defn request-cookies [req res opts]
+(defn ^:no-doc request-cookies [req res opts]
   (when-let [cookies (-> (.-headers req) (aget "cookie"))]
     (let [cookie-manager (Cookies. req res (gen-keys opts))]
       (reduce

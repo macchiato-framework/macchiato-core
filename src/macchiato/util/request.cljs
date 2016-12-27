@@ -50,14 +50,6 @@ re-value (str re-token "|" re-quoted))
   (if-let [type (content-type request)]
     (.startsWith type "application/x-www-form-urlencoded")))
 
-(defn render [v]
-  (let [t (type v)]
-    (cond
-      (= t Keyword) :keyword
-      (= t js/String) :stting
-      (satisfies? ICollection v) :coll
-      nil :nil)))
-
 (defmulti body-string
           "Return the request body as a string." {:arglists '([request])}
           (fn [{:keys [body]}]

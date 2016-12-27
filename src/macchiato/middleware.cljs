@@ -2,7 +2,7 @@
   (:require
     [clojure.set :refer [difference]]))
 
-(defn update-middleware-meta [handler handler-middleware middleware-meta]
+(defn- update-middleware-meta [handler handler-middleware middleware-meta]
   (with-meta
     handler
     {:macchiato/middleware
@@ -29,7 +29,7 @@
         (recur handler-middleware)))
     handler))
 
-(defn loaded? [middleware {:keys [id]}]
+(defn- loaded? [middleware {:keys [id]}]
   (some #{id} (map :id middleware)))
 
 (defn wrap

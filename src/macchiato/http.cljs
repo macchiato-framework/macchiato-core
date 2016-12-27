@@ -5,11 +5,11 @@
     [macchiato.middleware.session :as session]
     [cljs.nodejs :as node]))
 
-(def Stream (node/require "stream"))
+(def ^:no-doc Stream (node/require "stream"))
 
-(def url-parser (node/require "url"))
+(def ^:no-doc url-parser (node/require "url"))
 
-(defn req->map [req res {:keys [scheme] :as opts}]
+(defn- req->map [req res {:keys [scheme] :as opts}]
   (let [conn         (.-connection req)
         url          (.parse url-parser (.-url req))
         http-version (.-httpVersion req)
@@ -89,7 +89,7 @@
     (.on data "error" raise)
     (.pipe data node-server-response)))
 
-(defn response [request-map node-server-response raise opts]
+(defn- response [request-map node-server-response raise opts]
   (fn [{:keys [cookies headers body status]}]
     (try
       (cookies/set-cookies cookies request-map node-server-response (:cookies opts))
@@ -98,7 +98,7 @@
       (catch js/Error e
         (raise e)))))
 
-(defn error-handler [node-server-response]
+(defn- error-handler [node-server-response]
   (fn [error]
     (doto node-server-response
       (.writeHead 500 #js {"content-type" "text/html"})
