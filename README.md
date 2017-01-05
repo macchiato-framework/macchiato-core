@@ -2,6 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/macchiato-framework/macchiato-core.svg?style=svg)](https://circleci.com/gh/macchiato-framework/macchiato-core)
 
+[![Clojars Project](https://img.shields.io/clojars/v/macchiato/core.svg)](https://clojars.org/macchiato/core)
+
+
 Macchiato Core implements core Ring 1.6 async handlers and middleware on top of Node.js. The API is kept same as the original Ring API whenever possible.
 
 ### Getting Started
