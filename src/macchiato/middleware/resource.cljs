@@ -6,15 +6,27 @@
     [macchiato.fs.path :as path]
     [macchiato.util.response :as resp]))
 
-(defn file-exists? [path]
-  (try
-    (and
-      (fs/exists? path)
-      (fs/file? path))
-    (catch js/Error _)))
+(defn- file-exists? [path]
+  (when path
+    (try
+      (and
+        (fs/exists? path)
+        (fs/file? path))
+      (catch js/Error _))))
 
-(defn uri->path [root-path uri]
-  (s/replace (str root-path (js/decodeURI uri)) #"/" path/separator))
+(defn- remove-leading-slash [url]
+  (if (s/starts-with? url "/")
+    (subs url 1) url))
+
+(defn- uri->path [root-path uri]
+  (let [root (path/resolve root-path)
+        path (path/resolve root
+                           (-> uri
+                               (remove-leading-slash)
+                               (js/decodeURI)
+                               (s/replace #"/" path/separator)))]
+    (when (s/starts-with? path root)
+      path)))
 
 (defn
   ^{:macchiato/middleware
