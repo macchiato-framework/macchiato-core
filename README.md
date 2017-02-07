@@ -13,6 +13,8 @@ Getting up and running is easy, simply create a new project using [Leiningen](ht
 
     lein new macchiato myapp
 
+See [here](https://github.com/macchiato-framework/examples) for some example projects to get started.
+
 ### [API Documentation](https://macchiato-framework.github.io/api/core/index.html)
 
 Available middleware:
