@@ -63,6 +63,11 @@
   (-write-response [data node-server-response _]
     (.write node-server-response (-> data clj->js js/JSON.stringify))
     (.end node-server-response))
+  
+  PersistentTreeMap
+  (-write-response [data node-server-response _]
+    (.write node-server-response (-> data clj->js js/JSON.stringify))
+    (.end node-server-response))
 
   PersistentVector
   (-write-response [data node-server-response raise]
