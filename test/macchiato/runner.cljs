@@ -6,6 +6,7 @@
     [macchiato.test.middleware.content-type]
     [macchiato.test.middleware.flash]
     [macchiato.test.middleware.middleware-meta]
+    [macchiato.test.middleware.node-middleware]
     [macchiato.test.middleware.not-modified]
     [macchiato.test.middleware.params]
     [macchiato.test.middleware.resource]
@@ -21,6 +22,7 @@
            'macchiato.test.middleware.content-type
            'macchiato.test.middleware.flash
            'macchiato.test.middleware.middleware-meta
+           'macchiato.test.middleware.node-middleware
            'macchiato.test.middleware.not-modified
            'macchiato.test.middleware.params
            'macchiato.test.middleware.resource
