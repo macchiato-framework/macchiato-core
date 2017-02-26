@@ -1,5 +1,6 @@
 (ns macchiato.util.response
   (:require
+    [clojure.walk :as walk]
     [cuerdas.core :as string]
     [macchiato.fs :as fs]))
 
@@ -65,6 +66,30 @@
   (and (map? resp)
        (integer? (:status resp))
        (map? (:headers resp))))
+
+(defn json
+  "Turn the payload into a proper response map if it isn't and set the
+  content type to json."
+  [resp]
+  (-> (if-not (response? resp)
+        {:status 200
+         :headers {}
+         :body resp}
+        resp)
+      (content-type "application/json")))
+
+(defn- deep-sort-map
+  "Recursively walk the structure converting maps in sorted maps."
+  [form]
+  (walk/postwalk (fn [val]
+                   (if (map? val) (into (sorted-map) val) val))
+                 form))
+
+(defn sorted-json
+  "Turn the payload into a sorted JSON response."
+  [resp]
+  (-> (json resp)
+      (update-in [:body] deep-sort-map)))
 
 (defn continue
   "100 Continue (Informational)
@@ -639,4 +664,3 @@
    {:status  599
     :headers {}
     :body    body}))
-
