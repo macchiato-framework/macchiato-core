@@ -1,6 +1,7 @@
 (ns macchiato.test.util.response
   (:require
     [macchiato.util.response :as r]
+    [cognitect.transit :as transit]
     [cljs.test :refer-macros [is are deftest testing use-fixtures]]))
 
 (deftest test-content-type
@@ -50,3 +51,9 @@
                         "content-type"
                         str "; charset=UTF-8")
          {:headers {"content-type" "; charset=UTF-8"}})))
+
+(deftest test-transit-response
+  (let [some-edn {:test :value :message "Hello!"}
+        resp (r/transit some-edn)
+        decoded (transit/read (transit/reader :json) (:body resp))]
+    (is (= some-edn decoded))))
