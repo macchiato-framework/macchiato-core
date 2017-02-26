@@ -1,6 +1,6 @@
 (ns macchiato.middleware.node-middleware)
 
-(defn populate-req-map
+(defn- populate-req-map
   "Translate (js->clj) each property from the node request into the req map."
   [req mappings]
   (let [node-req (:node/request req)]
