@@ -93,8 +93,8 @@
       (update-in [:body] deep-sort-map)))
 
 (defn transit
-  [resp]
   "Turns the payload into a transit response."
+  [resp]
   (let [resp (if-not (response? resp)
                {:status 200
                 :headers {}
