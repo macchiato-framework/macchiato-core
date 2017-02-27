@@ -16,26 +16,3 @@ Getting up and running is easy, simply create a new project using [Leiningen](ht
 See [here](https://github.com/macchiato-framework/examples) for some example projects to get started.
 
 ### [API Documentation](https://macchiato-framework.github.io/api/core/index.html)
-
-Available middleware:
-
-* anti-forgery
-* content-type
-* default-charset
-* file
-* flash
-* head
-* keyword-params
-* multipart-params
-* nested-params
-* not-modified
-* params
-* proxy-headers
-* session
-* ssl
-* x-headers
-
-#### Attribution
-
-Most middleware is ported directly from [Ring core middleware](https://github.com/ring-clojure/ring/tree/master/ring-core/src/ring/middleware).
-
