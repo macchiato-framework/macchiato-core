@@ -11,27 +11,29 @@
 
 (def default-content-types
   #{"application/json"
-    "application/transit"})
+    "application/transit+json"})
 
 (def default-accept-types
-  ["application/transit" :json])
+  ["application/transit+json" "application/json"])
 
+;; request content type multimethods for decoding the request body
 (defmulti parse-request-content :type)
 
 (defmethod parse-request-content "application/json"
   [{:keys [charset body keywordize?]}]
   (js->clj (js/JSON.parse body charset) :keywordize-keys keywordize?))
 
-(defmethod parse-request-content "application/transit"
+(defmethod parse-request-content "application/transit+json"
   [{:keys [charset body keywordize?]}]
   (t/read (t/reader :json) body))
 
+;; response accept multimethods for serializing the response
 (defmulti parse-response-content :type)
 
-(defmethod parse-response-content :json [{:keys [charset body]}]
+(defmethod parse-response-content "application/json" [{:keys [charset body]}]
   (clj->js body))
 
-(defmethod parse-response-content :transit [{:keys [charset body]}]
+(defmethod parse-response-content "application/transit+json" [{:keys [charset body]}]
   (t/write (t/writer :json) body))
 
 (defn infer-request-content-type [headers content-types]
@@ -41,7 +43,7 @@
        :charset (or (.-charset content-type) "utf8")})))
 
 (defn infer-response-content-type [body accept-types]
-  (some-> (accepts. body) (.type accept-types) keyword))
+  (some-> (accepts. body) (.type accept-types)))
 
 (defn format-response-body [node-request response accept-types]
   (if-let [accept-type (infer-response-content-type node-request accept-types)]
@@ -54,7 +56,6 @@
   wrap-restful-format
   "attempts to infer the request content type using the content-type header
    serializes the response based on the first known accept header
-
    optional keys:
    :content-types a set of strings matching the content types
    :accept-types a vector of accept types to match in the desired order
