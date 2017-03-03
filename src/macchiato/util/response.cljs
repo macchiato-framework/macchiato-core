@@ -110,24 +110,21 @@
   The server has received the request headers and the client should proceed to send the request body."
   ([]
    {:status  100
-    :headers {}
-    :body    ""}))
+    :headers {}}))
 
 (defn switching-protocols
   "101 Switching Protocols (Informational)
   The server is switching protocols because the client requested the switch."
   ([]
    {:status  101
-    :headers {}
-    :body    ""}))
+    :headers {}}))
 
 (defn processing
   "102 Processing (Informational)
   The server is processing the request but no response is available yet."
   ([]
    {:status  102
-    :headers {}
-    :body    ""}))
+    :headers {}}))
 
 (defn ok
   "200 OK (Success)
@@ -171,16 +168,14 @@
   The server successfully processed the request, but is not returning any content. Usually used as a response to a successful delete request."
   ([]
    {:status  204
-    :headers {}
-    :body    ""}))
+    :headers {}}))
 
 (defn reset-content
   "205 Reset Content (Success)
   The server successfully processed the request but is not returning any content. Unlike a 204 response, this response requires that the requester reset the document view."
   ([]
    {:status  205
-    :headers {}
-    :body    ""}))
+    :headers {}}))
 
 (defn partial-content
   "206 Partial Content (Success)
@@ -223,64 +218,56 @@
   There are multiple options for the resource that the client may follow."
   ([url]
    {:status  300
-    :headers {"Location" url}
-    :body    ""}))
+    :headers {"Location" url}}))
 
 (defn moved-permanently
   "301 Moved Permanently (Redirection)
   This and all future requests should be directed to the given URI."
   ([url]
    {:status  301
-    :headers {"Location" url}
-    :body    ""}))
+    :headers {"Location" url}}))
 
 (defn found
   "302 Found (Redirection)
   The resource was found but at a different URI."
   ([url]
    {:status  302
-    :headers {"Location" url}
-    :body    ""}))
+    :headers {"Location" url}}))
 
 (defn see-other
   "303 See Other (Redirection)
   The response to the request can be found under another URI using a GET method."
   ([url]
    {:status  303
-    :headers {"Location" url}
-    :body    ""}))
+    :headers {"Location" url}}))
 
 (defn not-modified
   "304 Not Modified (Redirection)
   The resource has not been modified since last requested."
   ([]
    {:status  304
-    :headers {}
-    :body    ""}))
+    :headers {}}))
 
 (defn use-proxy
   "305 Use Proxy (Redirection)
   This single request is to be repeated via the proxy given by the Location field."
   ([url]
    {:status  305
-    :headers {"Location" url}
-    :body    ""}))
+    :headers {"Location" url}}))
 
 (defn temporary-redirect
   "307 Temporary Redirect (Redirection)
   The request should be repeated with another URI but future requests can still use the original URI."
   ([url]
    {:status  307
-    :headers {"Location" url}
-    :body    ""}))
+    :headers {"Location" url}}))
 
 (defn permanent-redirect
   "308 Permanent Redirect (Redirection)
   The request and all future requests should be repeated using another URI."
   ([url]
    {:status  308
-    :headers {"Location" url}
-    :body    ""}))
+    :headers {"Location" url}}))
 
 (defn bad-request
   "400 Bad Request (ClientError)

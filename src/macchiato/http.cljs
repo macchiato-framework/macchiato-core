@@ -47,7 +47,8 @@
 (extend-protocol IHTTPResponseWriter
 
   nil
-  (-write-response [_ _ _])
+  (-write-response [_ node-server-response _]
+    (.end node-server-response))
 
   string
   (-write-response [data node-server-response _]
@@ -63,7 +64,7 @@
   (-write-response [data node-server-response _]
     (.write node-server-response (-> data clj->js js/JSON.stringify))
     (.end node-server-response))
-  
+
   PersistentTreeMap
   (-write-response [data node-server-response _]
     (.write node-server-response (-> data clj->js js/JSON.stringify))
