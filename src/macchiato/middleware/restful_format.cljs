@@ -1,7 +1,8 @@
 (ns macchiato.middleware.restful-format
   (:require
     [cljs.nodejs :as node]
-    [cognitect.transit :as t]))
+    [cognitect.transit :as t]
+    [macchiato.util.response :as r]))
 
 (def concat-stream (node/require "concat-stream"))
 
@@ -14,7 +15,8 @@
     "application/transit+json"})
 
 (def default-accept-types
-  ["application/transit+json" "application/json"])
+  ["application/json"
+   "application/transit+json"])
 
 ;; request content type multimethods for decoding the request body
 (defmulti parse-request-content :type)
@@ -47,7 +49,9 @@
 
 (defn format-response-body [node-request response accept-types]
   (if-let [accept-type (infer-response-content-type node-request accept-types)]
-    (update response :body #(parse-response-content {:type accept-type :body %}))
+    (-> response
+        (update :body #(parse-response-content {:type accept-type :body %}))
+        (r/content-type accept-type))
     response))
 
 (defn
@@ -56,7 +60,10 @@
   wrap-restful-format
   "attempts to infer the request content type using the content-type header
    serializes the response based on the first known accept header
-   optional keys:
+
+   the handler can be follows by a map of options
+
+   option keys:
    :content-types a set of strings matching the content types
    :accept-types a vector of accept types to match in the desired order
    :keywordize? a boolean specifying whether to keywordized parsed request"
