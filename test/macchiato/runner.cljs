@@ -10,6 +10,7 @@
     [macchiato.test.middleware.not-modified]
     [macchiato.test.middleware.params]
     [macchiato.test.middleware.resource]
+    [macchiato.test.middleware.restul-format]
     [macchiato.test.middleware.session]
     [macchiato.test.middleware.ssl]
     [macchiato.test.middleware.x-headers]
@@ -26,6 +27,7 @@
            'macchiato.test.middleware.not-modified
            'macchiato.test.middleware.params
            'macchiato.test.middleware.resource
+           'macchiato.test.middleware.restul-format
            'macchiato.test.middleware.session
            'macchiato.test.middleware.ssl
            'macchiato.test.util.mime-type
