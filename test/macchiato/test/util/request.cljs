@@ -1,7 +1,8 @@
 (ns macchiato.test.util.request
   (:require
     [macchiato.util.request
-     :refer [request-url
+     :refer [accept
+             request-url
              content-type
              content-length
              character-encoding
@@ -25,6 +26,21 @@
                        :uri "/index.html"
                        :headers {"host" "www.example.com"}})
          "https://www.example.com/index.html")))
+
+(deftest accept-header
+  (is
+    (= [{:type "application", :sub-type "json", :level "1", :q 0.4}]
+       (accept "application/json;level=1;q=0.4")))
+  (is
+    (= [{:type "application", :sub-type "json", :q 1}]
+       (accept "application/json")))
+  (is
+    (= [{:type "application", :sub-type "transit+json", :q 1}]
+       (accept "application/transit+json")))
+  (is
+    (= [{:type "text", :sub-type "x-c", :q 1}
+        {:type "text", :sub-type "x-dvi", :q 0.8, :mxb "100000", :mxt "5.0"}]
+       (accept "text/x-dvi; q=.8; mxb=100000; mxt=5.0, text/x-c"))))
 
 (deftest test-content-type
   (testing "no content-type"

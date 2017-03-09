@@ -52,17 +52,6 @@
          :charset "utf8"
          :body    {:foo "bar"}}))))
 
-(deftest parse-header
-  (is
-    (= ["application/json"]
-       (rf/parse-accept-header* "application/json")))
-  (is
-    (= ["application/transit+json"]
-       (rf/parse-accept-header* "application/transit+json")))
-  (is
-    (= ["text/x-c" "text/x-dvi"]
-       (rf/parse-accept-header* "text/x-dvi; q=.8; mxb=100000; mxt=5.0, text/x-c"))))
-
 (deftest infer-accept-type
   (is
     (=

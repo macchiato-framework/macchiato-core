@@ -1,5 +1,7 @@
 (ns macchiato.util.request
-  "Functions for augmenting and pulling information from request maps.")
+  "Functions for augmenting and pulling information from request maps."
+  (:require
+    [cuerdas.core :as s]))
 
 (def ^{:doc "HTTP token: 1*<any CHAR except CTLs or tspecials>. See RFC2068"}
 re-token #"[!#$%&'*\-+.0-9A-Z\^_`a-z\|~]+")
@@ -20,6 +22,53 @@ re-value (str re-token "|" re-quoted))
        (:uri request)
        (if-let [query (:query-string request)]
          (str "?" query))))
+
+(def ^:private accept-fragment-re
+  #"^\s*(\*|[^()<>@,;:\"/\[\]?={}         ]+)/(\*|[^()<>@,;:\"/\[\]?={}         ]+)$")
+
+(def ^:private accept-fragment-param-re
+  #"([^()<>@,;:\"/\[\]?={} 	]+)=([^()<>@,;:\"/\[\]?={} 	]+|\"[^\"]*\")$")
+
+(defn- parse-q [s]
+  (try
+    (->> (js/parseFloat s)
+         (min 1)
+         (max 0))
+    (catch js/Error _
+      nil)))
+
+(defn ^:no-doc sort-by-check
+  [by check headers]
+  (sort-by by (fn [a b]
+                (cond (= (= a check) (= b check)) 0
+                      (= a check) 1
+                      :else -1))
+           headers))
+
+(defn accept
+  "Parse Accept headers into a sorted sequence of maps specifying the type and sub-type.
+  \"text/x-dvi; q=.8; mxb=100000; mxt=5.0, text/x-c\"
+  => ({:type \"text\", :sub-type \"x-c\", :q 1}
+      {:type \"text\", :sub-type \"x-dvi\", :q 0.8, :mxb \"100000\", :mxt \"5.0\"})"
+  [accept-header]
+  (if accept-header
+    (->> (map (fn [fragment]
+                (let [[media-range & params-list] (s/split fragment #"\s*;\s*")
+                      [type sub-type] (rest (re-matches accept-fragment-re media-range))]
+                  (-> (reduce (fn [m s]
+                                (if-let [[k v] (seq (rest (re-matches accept-fragment-param-re s)))]
+                                  (if (= "q" k)
+                                    (update-in m [:q] #(or % (parse-q v)))
+                                    (assoc m (keyword k) v))
+                                  m))
+                              {:type      type
+                               :sub-type  sub-type}
+                              params-list)
+                      (update-in [:q] #(or % 1.0)))))
+              (s/split accept-header #"[\s\n\r]*,[\s\n\r]*"))
+         (sort-by-check :type "*")
+         (sort-by-check :sub-type "*")
+         (sort-by :q >))))
 
 (defn content-type
   "Return the content-type of the request, or nil if no content-type is set."

@@ -1,9 +1,9 @@
 (ns macchiato.middleware.restful-format
   (:require
-    [cuerdas.core :as s]
     [cljs.nodejs :as node]
     [cognitect.transit :as t]
     [cljs.reader :as edn]
+    [macchiato.util.request :as rq]
     [macchiato.util.response :as r]))
 
 (def concat-stream (node/require "concat-stream"))
@@ -13,58 +13,11 @@
 (def lru (let [LRUCache (node/require "lru")]
            (LRUCache. #js {:maxElementsToStore 500})))
 
-(def ^:private accept-fragment-re
-  #"^\s*(\*|[^()<>@,;:\"/\[\]?={}         ]+)/(\*|[^()<>@,;:\"/\[\]?={}         ]+)$")
-
-(def ^:private accept-fragment-param-re
-  #"([^()<>@,;:\"/\[\]?={} 	]+)=([^()<>@,;:\"/\[\]?={} 	]+|\"[^\"]*\")$")
-
-(defn- parse-q [s]
-  (try
-    (->> (js/parseFloat s)
-         (min 1)
-         (max 0))
-    (catch js/Error _
-      nil)))
-
-(defn ^:no-doc sort-by-check
-  [by check headers]
-  (sort-by by (fn [a b]
-                (cond (= (= a check) (= b check)) 0
-                      (= a check) 1
-                      :else -1))
-           headers))
-
-(defn parse-accept-header*
-  "Parse Accept headers into a sorted sequence of strings.
-  \"application/json;level=1;q=0.4\"
-  => (\"application/json\")"
-  [accept-header]
-  (if accept-header
-    (->> (map (fn [fragment]
-                (let [[media-range & params-list] (s/split fragment #"\s*;\s*")
-                      [type sub-type] (rest (re-matches accept-fragment-re media-range))]
-                  (-> (reduce (fn [m s]
-                                (if-let [[k v] (seq (rest (re-matches accept-fragment-param-re s)))]
-                                  (if (= "q" k)
-                                    (update-in m [:q] #(or % (parse-q v)))
-                                    (assoc m (keyword k) v))
-                                  m))
-                              {:type      type
-                               :sub-type  sub-type
-                               :full-type (str type "/" sub-type)}
-                              params-list)
-                      (update-in [:q] #(or % 1.0)))))
-              (s/split accept-header #"[\s\n\r]*,[\s\n\r]*"))
-         (sort-by-check :type "*")
-         (sort-by-check :sub-type "*")
-         (sort-by :q >)
-         (map :full-type))))
-
 (defn parse-accept-header [accept-header]
   (or
     (.get lru accept-header)
-    (let [parsed-header (parse-accept-header* accept-header)]
+    (let [parsed-header (map #(str (:type %) "/" (:sub-type %))
+                             (rq/accept accept-header))]
       (.set lru accept-header parsed-header)
       parsed-header)))
 
