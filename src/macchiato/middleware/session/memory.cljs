@@ -1,6 +1,6 @@
-(ns macchiato.session.memory
+(ns macchiato.middleware.session.memory
   "A session storage engine that stores session data in memory."
-  (:require [macchiato.session.store :refer [SessionStore]]))
+  (:require [macchiato.middleware.session.store :refer [SessionStore]]))
 
 (deftype MemoryStore [session-map]
   SessionStore

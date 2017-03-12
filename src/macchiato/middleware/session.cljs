@@ -1,6 +1,6 @@
 (ns macchiato.middleware.session
-  (:require [macchiato.session.memory :as mem]
-            [macchiato.session.store :as store]))
+  (:require [macchiato.middleware.session.memory :as mem]
+            [macchiato.middleware.session.store :as store]))
 
 (defn- session-options
   [options]

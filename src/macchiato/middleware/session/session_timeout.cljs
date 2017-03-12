@@ -1,4 +1,4 @@
-(ns macchiato.session.session-timeout)
+(ns macchiato.middleware.session.session-timeout)
 
 (defn- current-time []
   (quot (.getTime (js/Date.)) 1000))

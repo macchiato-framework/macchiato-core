@@ -1,8 +1,8 @@
-(ns macchiato.session.cookie
+(ns macchiato.middleware.session.cookie
   (:require
     [cljs.reader :as edn]
     [macchiato.crypto :as c]
-    [macchiato.session.store :refer [SessionStore]]))
+    [macchiato.middleware.session.store :refer [SessionStore]]))
 
 (defn- seal
   "Seal a Clojure data structure into an encrypted and HMACed string."

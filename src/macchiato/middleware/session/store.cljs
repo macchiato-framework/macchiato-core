@@ -1,4 +1,4 @@
-(ns macchiato.session.store
+(ns macchiato.middleware.session.store
   "protocol for defining session storage engines.")
 
 (defprotocol SessionStore

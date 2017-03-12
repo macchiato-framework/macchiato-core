@@ -1,8 +1,8 @@
 (ns macchiato.test.middleware.session
   (:require
     [cuerdas.core :as string]
-    [macchiato.session.store :as store]
-    [macchiato.session.memory :as memory]
+    [macchiato.middleware.session.store :as store]
+    [macchiato.middleware.session.memory :as memory]
     [macchiato.middleware.session :as session]
     [macchiato.test.mock.util :refer [mock-handler ok-response raw-response]]
     [macchiato.util.response :refer [ok get-header]]
