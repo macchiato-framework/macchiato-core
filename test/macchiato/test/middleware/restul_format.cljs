@@ -87,7 +87,11 @@
 
         handler                  (rf/wrap-restful-format
                                    (fn [req res raise]
-                                     (res (r/ok (:body req)))))]
+                                     (res (r/ok (:body req)))))
+        handler-keywordize       (rf/wrap-restful-format
+                                   (fn [req res raise]
+                                     (res (r/ok (:body req))))
+                                   {:keywordize? true})]
     (is (=
           (handler plain-request identity identity)
           {:status  200
@@ -98,6 +102,11 @@
           {:status  200
            :headers {}
            :body    {"foo" "bar"}}))
+    (is (=
+          (handler-keywordize json-request identity identity)
+          {:status  200
+           :headers {}
+           :body    {:foo "bar"}}))
     (is (=
           (handler json-request-response identity identity)
           {:status  200
