@@ -1,4 +1,4 @@
-(defproject macchiato/core "0.1.8"
+(defproject macchiato/core "0.1.9"
   :description "core Macchiato HTTP library"
   :url "https://github.com/yogthos/macchiato-framework/macchiato-core"
   :scm {:name "git"
