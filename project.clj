@@ -1,4 +1,4 @@
-(defproject macchiato/core "0.1.8"
+(defproject macchiato/core "0.1.9"
   :description "core Macchiato HTTP library"
   :url "https://github.com/yogthos/macchiato-framework/macchiato-core"
   :scm {:name "git"
@@ -9,10 +9,10 @@
   :dependencies [[com.andrewmcveigh/cljs-time "0.4.0"]
                  [com.cognitect/transit-cljs "0.8.239"]
                  [funcool/cuerdas "2.0.3"]
-                 [macchiato/fs "0.0.7"]
+                 [macchiato/fs "0.0.9"]
                  [org.clojure/clojure "1.8.0" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.542" :scope "provided"]]
-  :plugins [[lein-cljsbuild "1.1.4"]
+                 [org.clojure/clojurescript "1.9.671" :scope "provided"]]
+  :plugins [[lein-cljsbuild "1.1.6"]
             [lein-codox "0.10.2"]
             [lein-doo "0.1.7"]
             [lein-npm "0.6.2"]]
