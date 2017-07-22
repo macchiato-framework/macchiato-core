@@ -118,20 +118,9 @@
                     (response node-client-request node-server-response error-handler opts)
                     (error-handler node-server-response)))))
 
-(defn ws-handler [handler websocket]
-  (let [upgrade-req (.-upgradeReq websocket)
-        url (.parse url-parser (.-url upgrade-req))
-        uri (.-pathname url)
-        query (.-search url)
-        query (if query (.substring query 1))
-        headers (js->clj (.-headers upgrade-req))
-        conn (.-connection upgrade-req)
-        address (js->clj (.address conn))]
-    (handler {:server-port (address "port")
-              :server-name (address "address")
-              :uri uri
-              :query-string query
-              :headers headers
-              :websocket websocket
-              :websocket? true
-              :request-method :get})))
+(defn ws-handler [handler opts]
+  (let [opts (-> opts (update-in [:cookies :signed?] (fnil identity true)))]
+    (fn [websocket]
+      (handler (merge (req->map (.-upgradeReq websocket) nil opts)
+                      {:websocket  websocket
+                       :websocket? true})))))
