@@ -1,4 +1,4 @@
-(defproject macchiato/core "0.2.1"
+(defproject macchiato/core "0.2.2"
   :description "core Macchiato HTTP library"
   :url "https://github.com/yogthos/macchiato-framework/macchiato-core"
   :scm {:name "git"
@@ -6,7 +6,7 @@
   :license {:name "MIT License"
             :url  "http://opensource.org/licenses/MIT"}
   :clojurescript? true
-  :dependencies [[com.andrewmcveigh/cljs-time "0.4.0"]
+  :dependencies [[com.andrewmcveigh/cljs-time "0.5.0"]
                  [com.cognitect/transit-cljs "0.8.239"]
                  [funcool/cuerdas "2.0.3"]
                  [macchiato/fs "0.1.1"]
