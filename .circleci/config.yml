@@ -1,0 +1,26 @@
+jobs:
+  test:
+    docker:
+      - image: theasp/clojurescript-nodejs:latest
+    working_directory: /root/macchiato
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "project.clj" }}
+            - v1-dependencies
+      - run:
+          command: lein deps
+      - save_cache:
+          key: v1-dependencies-{{ checksum "project.clj" }}
+          paths:
+            - /root/.m2
+            - node_modules
+      - run:
+          command: lein test
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test

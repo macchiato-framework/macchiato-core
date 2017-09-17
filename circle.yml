@@ -1,8 +1,0 @@
-machine:
-  java:
-    version: openjdk8
-  node:
-    version: 7.2.1
-test:
-  override:
-    - lein test
