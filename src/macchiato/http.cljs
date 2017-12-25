@@ -120,7 +120,7 @@
 
 (defn ws-handler [handler opts]
   (let [opts (-> opts (update-in [:cookies :signed?] (fnil identity true)))]
-    (fn [websocket]
-      (handler (merge (req->map (.-upgradeReq websocket) nil opts)
+    (fn [websocket request]
+      (handler (merge (req->map request nil opts)
                       {:websocket  websocket
                        :websocket? true})))))
