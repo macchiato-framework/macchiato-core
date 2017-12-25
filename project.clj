@@ -16,19 +16,19 @@
             [lein-codox "0.10.2"]
             [lein-doo "0.1.7"]
             [macchiato/lein-npm "0.6.3"]]
-  :npm {:dependencies [[concat-stream "1.5.2"]
-                       [content-type "1.0.2"]
-                       [cookies "0.6.2"]
-                       [etag "1.7.0"]
+  :npm {:dependencies [[concat-stream "1.6.0"]
+                       [content-type "1.0.4"]
+                       [cookies "0.7.1"]
+                       [etag "1.8.1"]
                        [lru "3.1.0"]
-                       [multiparty "4.1.2"]
+                       [multiparty "4.1.3"]
                        [random-bytes "1.0.0"]
-                       [qs "6.3.0"]
-                       [simple-encryptor "1.1.0"]
+                       [qs "6.5.1"]
+                       [simple-encryptor "1.1.1"]
                        [url "0.11.0"]
-                       [ws "1.1.1"]]}
-  :filespecs [{:type :bytes
-               :path "project.clj"
+                       [ws "3.3.3"]]}
+  :filespecs [{:type  :bytes
+               :path  "project.clj"
                :bytes ~(slurp "project.clj")}]
   :codox {:language :clojurescript}
   :profiles {:test
