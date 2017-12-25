@@ -1,4 +1,4 @@
-(defproject macchiato/core "0.2.3"
+(defproject macchiato/core "0.2.5"
   :description "core Macchiato HTTP library"
   :url "https://github.com/yogthos/macchiato-framework/macchiato-core"
   :scm {:name "git"
@@ -6,16 +6,16 @@
   :license {:name "MIT License"
             :url  "http://opensource.org/licenses/MIT"}
   :clojurescript? true
-  :dependencies [[com.andrewmcveigh/cljs-time "0.5.0"]
-                 [com.cognitect/transit-cljs "0.8.239"]
-                 [funcool/cuerdas "2.0.3"]
-                 [macchiato/fs "0.1.1"]
-                 [org.clojure/clojure "1.8.0" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.854" :scope "provided"]]
+  :dependencies [[com.andrewmcveigh/cljs-time "0.5.2"]
+                 [com.cognitect/transit-cljs "0.8.243"]
+                 [funcool/cuerdas "2.0.4"]
+                 [macchiato/fs "0.2.0"]
+                 [org.clojure/clojure "1.9.0" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.946" :scope "provided"]]
   :plugins [[lein-cljsbuild "1.1.6"]
             [lein-codox "0.10.2"]
             [lein-doo "0.1.7"]
-            [lein-npm "0.6.2"]]
+            [macchiato/lein-npm "0.6.3"]]
   :npm {:dependencies [[concat-stream "1.5.2"]
                        [content-type "1.0.2"]
                        [cookies "0.6.2"]
@@ -27,6 +27,9 @@
                        [simple-encryptor "1.1.0"]
                        [url "0.11.0"]
                        [ws "1.1.1"]]}
+  :filespecs [{:type :bytes
+               :path "project.clj"
+               :bytes ~(slurp "project.clj")}]
   :codox {:language :clojurescript}
   :profiles {:test
              {:cljsbuild
