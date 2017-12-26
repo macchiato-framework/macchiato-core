@@ -81,7 +81,7 @@
 (defn normalize-headers
   "Normalize the headers by converting them to capitalized strings."
   [headers]
-  (let [upcase          #(str/join ", " (sort (map (comp str/upper-case name) %)))
+  (let [upcase          #(str/join ", " (sort (map (comp str/upper name) %)))
         to-header-names #(str/join ", " (sort (map (comp header-name name) %)))]
     (reduce
       (fn [acc [k v]]
