@@ -50,17 +50,18 @@
       (.on form "progress" progress-fn))
     (.parse form (:body request)
             (fn [err fields files]
-              (let [params (merge
-                             (parse-file-params files)
-                             (parse-params fields))]
-                (if err
-                  (raise err)
+              (if err
+                (raise err)
+                (let [params (merge
+                               (parse-file-params files)
+                               (parse-params fields))]
                   (handler
                     (assoc request
                       :multipart-params params
                       :params params)
                     respond
-                    raise)))))))
+                    raise)))
+              ))))
 
 (defn
   ^{:macchiato/middleware
