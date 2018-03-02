@@ -43,7 +43,7 @@
       (when path {:path path})
       (when domain {:domain domain})
       (when expires {:expires expires})
-      (when http-only {:http-only http-only})
+      (when (some? http-only) {:httpOnly http-only})
       (when overwrite? {:overwrite overwrite?}))))
 
 (defn- gen-keys [cookie-opts]
