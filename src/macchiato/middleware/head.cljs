@@ -24,7 +24,13 @@ exception that a response to a HEAD request should have an empty body.")
   "Middleware that turns any HEAD request into a GET, and then sets the response
   body to nil."
   [handler]
-  (fn [request respond raise]
-    (handler (head-request request)
-             (fn [response] (respond (head-response response request)))
-             raise)))
+  (fn
+    ([request]
+     (-> request
+         head-request
+         handler
+         (head-response request)))
+    ([request respond raise]
+     (handler (head-request request)
+              (fn [response] (respond (head-response response request)))
+              raise))))
