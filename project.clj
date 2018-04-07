@@ -16,7 +16,7 @@
             [lein-codox "0.10.2"]
             [lein-doo "0.1.7"]
             [macchiato/lein-npm "0.6.3"]]
-  :npm {:dependencies [[concat-stream "1.6.0"]
+  :npm {:dependencies [[concat-stream "1.6.2"]
                        [content-type "1.0.4"]
                        [cookies "0.7.1"]
                        [etag "1.8.1"]
@@ -24,9 +24,9 @@
                        [multiparty "4.1.3"]
                        [random-bytes "1.0.0"]
                        [qs "6.5.1"]
-                       [simple-encryptor "1.1.1"]
+                       [simple-encryptor "1.2.0"]
                        [url "0.11.0"]
-                       [ws "3.3.3"]]}
+                       [ws "5.1.1"]]}
   :filespecs [{:type  :bytes
                :path  "project.clj"
                :bytes ~(slurp "project.clj")}]
