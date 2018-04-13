@@ -1,0 +1,24 @@
+{
+  "name": "@macchiato/core",
+  "version": "0.2.11",
+  "description": "ClojureScript Ring style HTTP server abstraction for Node.js.",
+  "author": {
+    "name" : "Dmitri Sotnikov",
+    "email" : "dmitri.sotnikov@gmail.com",
+    "url" : "http://yogthos.net/"
+  },
+  "homepage": "https://github.com/macchiato-framework/macchiato-core",
+  "license": "MIT",
+  "directories": {
+    "lib": "src"
+  },
+  "files": [
+    "src/*"
+  ],
+  "keywords": [
+    "cljs",
+    "cljc",
+    "self-host",
+    "macro"
+  ]
+}
