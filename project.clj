@@ -1,9 +1,9 @@
 (defproject macchiato/core "0.2.11"
-  :description "core Macchiato HTTP library"
+  :description "ClojureScript Ring style HTTP server abstraction for Node.js."
   :url "https://github.com/yogthos/macchiato-framework/macchiato-core"
   :scm {:name "git"
         :url  "https://github.com/macchiato-framework/macchiato-core.git"}
-  :license {:name "MIT License"
+  :license {:name "MIT"
             :url  "http://opensource.org/licenses/MIT"}
   :clojurescript? true
   :dependencies [[com.andrewmcveigh/cljs-time "0.5.2"]
@@ -15,8 +15,11 @@
   :plugins [[lein-cljsbuild "1.1.6"]
             [lein-codox "0.10.2"]
             [lein-doo "0.1.7"]
-            [macchiato/lein-npm "0.6.3"]]
-  :npm {:dependencies [[concat-stream "1.6.2"]
+            [macchiato/lein-npm "0.6.6"]]
+  :npm {:write-package-json true
+        :name "@macchiato/core"
+        :private false
+        :dependencies [[concat-stream "1.6.2"]
                        [content-type "1.0.4"]
                        [cookies "0.7.1"]
                        [etag "1.8.1"]
@@ -26,7 +29,13 @@
                        [qs "6.5.1"]
                        [simple-encryptor "1.2.0"]
                        [url "0.11.0"]
-                       [ws "5.1.1"]]}
+                       [ws "5.1.1"]]
+        :directories {:lib "src"}
+        :files ["src/*"]
+        :keywords ["cljs" "cljc" "self-host" "macro"]
+        :author {:name "Dmitri Sotnikov"
+                 :email "dmitri.sotnikov@gmail.com"
+                 :url "http://yogthos.net/"}}
   :filespecs [{:type  :bytes
                :path  "project.clj"
                :bytes ~(slurp "project.clj")}]
