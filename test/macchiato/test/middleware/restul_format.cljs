@@ -7,6 +7,7 @@
     [macchiato.util.response :as r]
     [macchiato.test.mock.request :refer [request]]
     [macchiato.test.mock.util :refer [mock-handler raw-response ok-response]]
+    [macchiato.test.mock.transit :refer [MockPoint mock-write-handlers mock-read-handlers]]
     [cljs.nodejs :as node]))
 
 (defn- mock-node-request [body content-type accept-type]
@@ -18,8 +19,8 @@
 (defn json [body]
   (js/JSON.stringify (clj->js body)))
 
-(defn transit [body]
-  (t/write (t/writer :json) body))
+(defn transit [body & [{:keys [type opts]}]]
+  (t/write (t/writer (or type :json) opts) body))
 
 (deftest serialize
   (is
@@ -34,7 +35,15 @@
          {:type    "application/transit+json"
           :charset "utf8"
           :body    (transit {:foo "bar"})})
-       {:foo "bar"})))
+       {:foo "bar"}))
+  (is
+    (= (rf/deserialize-request
+         {:type         "application/transit+json"
+          :charset      "utf8"
+          :body         (transit {:point (MockPoint. 0 0)}
+                                 {:opts mock-write-handlers})
+          :transit-opts {:opts mock-read-handlers}})
+       {:point (MockPoint. 0 0)})))
 
 (deftest deserialize
   (is
@@ -50,7 +59,16 @@
       (rf/serialize-response
         {:type    "application/transit+json"
          :charset "utf8"
-         :body    {:foo "bar"}}))))
+         :body    {:foo "bar"}})))
+  (is
+    (=
+      (transit {:point (MockPoint. 0 0)}
+               {:opts mock-write-handlers})
+      (rf/serialize-response
+        {:type         "application/transit+json"
+         :charset      "utf8"
+         :body         {:point (MockPoint. 0 0)}
+         :transit-opts {:opts mock-write-handlers}}))))
 
 (deftest infer-accept-type
   (is
@@ -84,6 +102,11 @@
                                    (transit {:foo "bar"})
                                    "application/transit+json"
                                    "application/transit+json")
+        transit-custom-request-response (mock-node-request
+                                          (transit {:point (MockPoint. 0 0)}
+                                                   {:opts mock-write-handlers})
+                                          "application/transit+json"
+                                          "application/transit+json")
 
         handler                  (rf/wrap-restful-format
                                    (fn [req res raise]
@@ -121,4 +144,10 @@
           (handler transit-request-response identity identity)
           {:status  200
            :headers {"Content-Type" "application/transit+json"}
-           :body    (transit {:foo "bar"})}))))
+           :body    (transit {:foo "bar"})}))
+    (is (=
+          (handler transit-custom-request-response identity identity)
+          {:status  200
+           :headers {"Content-Type" "application/transit+json"}
+           :body    (transit {:point (MockPoint. 0 0)}
+                             {:opts mock-write-handlers})}))))

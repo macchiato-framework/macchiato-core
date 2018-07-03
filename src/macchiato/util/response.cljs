@@ -94,13 +94,13 @@
 
 (defn transit
   "Turns the payload into a transit response."
-  [resp]
+  [resp & [{:keys [type opts]}]]
   (let [resp (if-not (response? resp)
                {:status 200
                 :headers {}
                 :body resp}
                resp)
-        write-transit #(t/write (t/writer :json) %)]
+        write-transit #(t/write (t/writer (or type :json) opts) %)]
     (-> resp
         (update-in [:body] write-transit)
         (content-type "application/transit+json"))))
