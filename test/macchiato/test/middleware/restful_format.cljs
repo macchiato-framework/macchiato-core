@@ -85,36 +85,36 @@
         rf/default-accept-types))))
 
 (deftest test-roundtrip
-  (let [plain-request            (mock-node-request "hello" nil nil)
-        json-request             (mock-node-request
-                                   (json {:foo "bar"})
-                                   "application/json"
-                                   nil)
-        json-request-response    (mock-node-request
-                                   (json {:foo "bar"})
-                                   "application/json"
-                                   "application/json")
-        transit-request          (mock-node-request
-                                   (transit {:foo "bar"})
-                                   "application/transit+json"
-                                   nil)
-        transit-request-response (mock-node-request
-                                   (transit {:foo "bar"})
-                                   "application/transit+json"
-                                   "application/transit+json")
+  (let [plain-request                   (mock-node-request "hello" nil nil)
+        json-request                    (mock-node-request
+                                          (json {:foo "bar"})
+                                          "application/json"
+                                          nil)
+        json-request-response           (mock-node-request
+                                          (json {:foo "bar"})
+                                          "application/json"
+                                          "application/json")
+        transit-request                 (mock-node-request
+                                          (transit {:foo "bar"})
+                                          "application/transit+json"
+                                          nil)
+        transit-request-response        (mock-node-request
+                                          (transit {:foo "bar"})
+                                          "application/transit+json"
+                                          "application/transit+json")
         transit-custom-request-response (mock-node-request
                                           (transit {:point (MockPoint. 0 0)}
                                                    {:opts mock-write-handlers})
                                           "application/transit+json"
                                           "application/transit+json")
 
-        handler                  (rf/wrap-restful-format
-                                   (fn [req res raise]
-                                     (res (r/ok (:body req)))))
-        handler-keywordize       (rf/wrap-restful-format
-                                   (fn [req res raise]
-                                     (res (r/ok (:body req))))
-                                   {:keywordize? true})]
+        handler                         (rf/wrap-restful-format
+                                          (fn [req res raise]
+                                            (res (r/ok (:body req)))))
+        handler-keywordize              (rf/wrap-restful-format
+                                          (fn [req res raise]
+                                            (res (r/ok (:body req))))
+                                          {:keywordize? true})]
     (is (=
           (handler plain-request identity identity)
           {:status  200
