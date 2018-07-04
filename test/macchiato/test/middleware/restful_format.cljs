@@ -1,4 +1,4 @@
-(ns macchiato.test.middleware.restul-format
+(ns macchiato.test.middleware.restful-format
   (:require
     [cljs.test :refer-macros [is are deftest testing use-fixtures]]
     [cognitect.transit :as t]
