@@ -37,8 +37,9 @@
   (js->clj (js/JSON.parse body) :keywordize-keys keywordize?))
 
 (defmethod deserialize-request "application/transit+json"
-  [{:keys [body]}]
-  (t/read (t/reader :json) body))
+  [{:keys [body transit-opts]}]
+  (let [reader (t/reader (or (:type transit-opts) :json) (:opts transit-opts))]
+    (t/read reader body)))
 
 ;; response accept multimethods for serializing the response
 (defmulti serialize-response :type)
@@ -48,8 +49,9 @@
   (js/JSON.stringify (clj->js body)))
 
 (defmethod serialize-response "application/transit+json"
-  [{:keys [body]}]
-  (t/write (t/writer :json) body))
+  [{:keys [body transit-opts]}]
+  (let [writer (t/writer (or (:type transit-opts) :json) (:opts transit-opts))]
+    (t/write writer body)))
 
 (defn infer-request-content-type [headers content-types]
   (when-let [content-type (some->> (get headers "content-type") (.parse ct))]
@@ -63,21 +65,26 @@
                                            (get-in request [:headers "Accept"])))]
       (first (drop-while #(not-any? #{%} (set accept-types)) parsed-accept-types)))))
 
-(defn format-response-body [request response accept-types raise]
+(defn format-response-body [request response accept-types transit-opts raise]
   (try
     (if-let [accept-type (infer-response-content-type request accept-types)]
       (-> response
-          (update :body #(serialize-response {:type accept-type :body %}))
+          (update :body #(serialize-response {:type accept-type
+                                              :body %
+                                              :transit-opts transit-opts}))
           (r/content-type accept-type))
       response)
     (catch js/Error e
       (raise e))))
 
-(defn- parse-request-body [request content body keywordize? raise]
+(defn- parse-request-body [request content body keywordize? transit-opts raise]
   (try
     (assoc request
       :body (deserialize-request
-              (assoc content :body body :keywordize? keywordize?)))
+              (assoc content
+                     :body body
+                     :keywordize? keywordize?
+                     :transit-opts transit-opts)))
     (catch js/Error e
       (raise e))))
 
@@ -93,25 +100,46 @@
    option keys:
    :content-types a set of strings matching the content types
    :accept-types a set of strings mactching accept types, ressolves in client preferred order
-   :keywordize? a boolean specifying whether to keywordize the parsed JSON request body"
-  [handler & [{:keys [content-types accept-types keywordize?]}]]
+   :keywordize? a boolean specifying whether to keywordize the parsed JSON request body
+   :transit-opts a map containing transit configuration options of the form
+     {:reader {:type ... :opts ...}
+      :writer {:type ... :opts ...}
+     where :type and :opts are exactly as defined in the transit spec"
+  [handler & [{:keys [content-types accept-types keywordize? transit-opts]}]]
   (let [content-types (or content-types default-content-types)
         accept-types  (clj->js (or accept-types default-accept-types))]
     (fn [{:keys [headers body] :as request} respond raise]
       (let [respond (fn [response]
-                      (respond (format-response-body request response accept-types raise)))
+                      (respond (format-response-body
+                                 request
+                                 response
+                                 accept-types
+                                 (:writer transit-opts)
+                                 raise)))
             content (infer-request-content-type headers content-types)]
         (if (and body content)
           (if (string? body)
             (handler
-              (parse-request-body request content body keywordize? raise)
+              (parse-request-body
+                request
+                content
+                body
+                keywordize?
+                (:reader transit-opts)
+                raise)
               respond
               raise)
             (.pipe body
                    (concat-stream.
                      (fn [body]
                        (handler
-                         (parse-request-body request content body keywordize? raise)
+                         (parse-request-body
+                           request
+                           content
+                           body
+                           keywordize?
+                           (:reader transit-opts)
+                           raise)
                          respond
                          raise)))))
           (handler request respond raise))))))
