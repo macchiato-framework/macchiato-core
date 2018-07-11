@@ -33,7 +33,7 @@
      :protocol        (str (if (= :http scheme) "HTTP/" "HTTPS/") http-version)
      :secure?         (.-secure req)
      :signed-cookies  (js->clj (.-signedCookies req))
-     :ssl-client-cert (when-let [peer-cert-fn (.-getPeerCertificate conn)] (peer-cert-fn))
+     :ssl-client-cert (when (.-getPeerCertificate conn) (.getPeerCertificate conn))
      :stale?          (.-state req)
      :subdomains      (js->clj (.-subdomains req))
      :xhr?            (.-xhr req)
