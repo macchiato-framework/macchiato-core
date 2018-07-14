@@ -108,7 +108,7 @@
   (fn [error]
     (doto node-server-response
       (.writeHead 500 #js {"content-type" "text/html"})
-      (.write (.-message error))
+      (.write (str error))
       (.end))))
 
 (defn handler [http-handler opts]
