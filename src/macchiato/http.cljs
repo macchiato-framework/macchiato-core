@@ -114,9 +114,10 @@
 (defn handler [http-handler opts]
   (let [opts (-> opts (update-in [:cookies :signed?] (fnil identity true)))]
     (fn [node-client-request node-server-response]
-      (http-handler (req->map node-client-request node-server-response opts)
-                    (response node-client-request node-server-response error-handler opts)
-                    (error-handler node-server-response)))))
+      (let [handle-error (error-handler node-server-response)]
+        (http-handler (req->map node-client-request node-server-response opts)
+                      (response node-client-request node-server-response handle-error opts)
+                      handle-error)))))
 
 (defn ws-handler [handler opts]
   (let [opts (-> opts (update-in [:cookies :signed?] (fnil identity true)))]
