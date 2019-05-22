@@ -77,16 +77,13 @@
     (catch js/Error e
       (raise e))))
 
-(defn- parse-request-body [request content body keywordize? transit-opts raise]
-  (try
-    (assoc request
-      :body (deserialize-request
-              (assoc content
-                     :body body
-                     :keywordize? keywordize?
-                     :transit-opts transit-opts)))
-    (catch js/Error e
-      (raise e))))
+(defn- parse-request-body [request content body keywordize? transit-opts]
+  (assoc request
+         :body (deserialize-request
+                (assoc content
+                       :body body
+                       :keywordize? keywordize?
+                       :transit-opts transit-opts))))
 
 (defn
   ^{:macchiato/middleware
@@ -118,28 +115,16 @@
                                  raise)))
             content (infer-request-content-type headers content-types)]
         (if (and body content)
-          (if (string? body)
-            (handler
-              (parse-request-body
-                request
-                content
-                body
-                keywordize?
-                (:reader transit-opts)
-                raise)
-              respond
-              raise)
-            (.pipe body
-                   (concat-stream.
-                     (fn [body]
-                       (handler
-                         (parse-request-body
-                           request
-                           content
-                           body
-                           keywordize?
-                           (:reader transit-opts)
-                           raise)
-                         respond
-                         raise)))))
+          (letfn [(handle [body]
+                    (try
+                      (-> (parse-request-body request content body keywordize? (:reader transit-opts))
+                          (handler respond raise))
+                      (catch js/Error e
+                        (raise e))))]
+            (if (string? body)
+              (handle body)
+              (.pipe body
+                     (concat-stream.
+                      (fn [body]
+                        (handle body))))))
           (handler request respond raise))))))

@@ -90,6 +90,10 @@
                                           (json {:foo "bar"})
                                           "application/json"
                                           nil)
+        invalid-json-request            (mock-node-request
+                                         "{\"foo}"
+                                         "application/json"
+                                         nil)
         json-request-response           (mock-node-request
                                           (json {:foo "bar"})
                                           "application/json"
@@ -114,7 +118,10 @@
         handler-keywordize              (rf/wrap-restful-format
                                           (fn [req res raise]
                                             (res (r/ok (:body req))))
-                                          {:keywordize? true})]
+                                          {:keywordize? true})
+        handler-never                   (rf/wrap-restful-format
+                                         (fn [req res raise]
+                                           (throw "This handler is not expected to be called")))]
     (is (=
           (handler plain-request identity identity)
           {:status  200
@@ -135,6 +142,10 @@
           {:status  200
            :headers {"Content-Type" "application/json"}
            :body    (json {:foo "bar"})}))
+    (is (=
+          (handler-never invalid-json-request (constantly :responded) (constantly :raised))
+          :raised)
+        "Request with invalid json")
     (is (=
           (handler transit-request identity identity)
           {:status  200
