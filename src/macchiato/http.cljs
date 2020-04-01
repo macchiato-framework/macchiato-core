@@ -92,7 +92,8 @@
 
   Stream
   (-write-response [data node-server-response raise]
-    (.on data "error" raise)
+    (.on data "error" (fn [err]
+                        (.destroy (.-socket node-server-response) err)))
     (.pipe data node-server-response)))
 
 (defn- response [request-map node-server-response raise opts]
