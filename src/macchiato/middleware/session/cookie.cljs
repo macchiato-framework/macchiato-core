@@ -8,13 +8,13 @@
   "Seal a Clojure data structure into an encrypted and HMACed string."
   [key data]
   (let [data (c/encrypt key (pr-str data))]
-    (str (.toString (js/Buffer. data) "base64") "--" (c/hmac key data))))
+    (str (.toString (.from js/Buffer data) "base64") "--" (c/hmac key data))))
 
 (defn- unseal
   "Retrieve a sealed Clojure data structure from a string"
   [key string]
   (let [[data mac] (.split string "--")
-        data (.toString (js/Buffer. data "base64") "utf8")]
+        data (.toString (.from js/Buffer data "base64") "utf8")]
     (if (c/eq? mac (c/hmac key data))
       (edn/read-string (c/decrypt key data)))))
 

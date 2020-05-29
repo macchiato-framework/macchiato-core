@@ -7,7 +7,7 @@
 
 (def target (path/resolve "test"))
 
-(def target-file (str target "/runner.cljs"))
+(def target-file (str target path/separator "runner.cljs"))
 
 (deftest test-resource-path
   (testing "absolute path"
