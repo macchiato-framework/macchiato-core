@@ -21,7 +21,7 @@
   "files": [
     "src/*"
   ],
-  "version": "0.2.14",
+  "version": "0.2.19",
   "dependencies": {
     "random-bytes": "1.0.0",
     "multiparty": "4.1.3",
