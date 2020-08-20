@@ -32,6 +32,16 @@
     (.listen server port host on-success)
     server))
 
+(defn ipc-server
+  ":ipc-path - UNIX/Windows domain socket the server will listen on
+  :handler - Macchiato handler function for handling request/response
+  :on-success - success callback that's called when server starts listening"
+  [{:keys [handler ipc-path on-success websockets?] :as opts}]
+  (let [http-handler (http/handler handler (assoc opts :scheme :http))
+        server       (.createServer (node/require "http") http-handler)]
+    (.listen server ipc-path on-success)
+    server))
+
 (defn start
   ":host - hostname to bind (default 0.0.0.0)
   :port - HTTP port the server will listen on
@@ -48,7 +58,8 @@
   (case protocol
     :http (http-server opts)
     :https (https-server opts)
-    (throw (js/Error. (str "Unrecognized protocol: " protocol " must be either :http or :https")))))
+    :ipc (ipc-server opts)
+    (throw (js/Error. (str "Unrecognized protocol: " protocol " must be :http, :https, or :ipc")))))
 
 (defn start-ws
   "starts a WebSocket server given a handler and a Node server instance"
