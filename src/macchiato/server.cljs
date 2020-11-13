@@ -13,7 +13,8 @@
   :on-success - success callback that's called when server starts listening"
   [{:keys [handler host port on-success websockets?] :as opts}]
   (let [http-handler (http/handler handler (assoc opts :scheme :http))
-        server       (.createServer (node/require "http") http-handler)]
+        ^js module (node/require "http")
+        ^js server (.createServer module http-handler)]
     (.listen server port host on-success)
     server))
 
@@ -28,7 +29,8 @@
   (let [pk           (fs/slurp private-key)
         pc           (fs/slurp certificate)
         http-handler (http/handler handler (assoc opts :scheme :https))
-        server       (.createServer (node/require "https") (clj->js {:key pk :cert pc}) http-handler)]
+        ^js module   (node/require "https")
+        ^js server   (.createServer module (clj->js {:key pk :cert pc}) http-handler)]
     (.listen server port host on-success)
     server))
 
@@ -38,7 +40,8 @@
   :on-success - success callback that's called when server starts listening"
   [{:keys [handler ipc-path on-success websockets?] :as opts}]
   (let [http-handler (http/handler handler (assoc opts :scheme :http))
-        server       (.createServer (node/require "http") http-handler)]
+        ^js module   (node/require "http")
+        ^js server   (.createServer module http-handler)]
     (.listen server ipc-path on-success)
     server))
 
@@ -64,5 +67,5 @@
 (defn start-ws
   "starts a WebSocket server given a handler and a Node server instance"
   [server handler & [opts]]
-  (let [wss (ws.Server. #js{:server server})]
+  (let [^js wss (ws.Server. #js{:server server})]
     (.on wss "connection" (http/ws-handler handler opts))))
