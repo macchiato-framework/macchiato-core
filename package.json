@@ -25,7 +25,7 @@
   "dependencies": {
     "concat-stream": "1.6.2",
     "content-type": "1.0.4",
-    "cookies": "0.7.1",
+    "cookies": "0.8.0",
     "etag": "1.8.1",
     "lru": "3.1.0",
     "multiparty": "4.1.3",
