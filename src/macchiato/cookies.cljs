@@ -35,11 +35,12 @@
   (-serialize-cookie [cookie]
     (-> cookie clj->js js/JSON.stringify)))
 
-(defn- translate-cookie-opts [{:keys [secure signed max-age expires http-only path domain overwrite?]}]
+(defn- translate-cookie-opts [{:keys [same-site secure signed max-age expires http-only path domain overwrite?]}]
   (clj->js
     (merge
       (when secure {:secure true})
       (when signed {:signed true})
+      (when same-site {:sameSite same-site})
       (when max-age {:maxAge max-age})
       (when path {:path path})
       (when domain {:domain domain})
