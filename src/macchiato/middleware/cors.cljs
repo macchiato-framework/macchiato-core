@@ -75,7 +75,7 @@
   [header]
   (if header
     (->> (str/split (name header) #"-")
-         (map str/capitalize)
+         (map str/capital)
          (str/join "-"))))
 
 (defn normalize-headers

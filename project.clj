@@ -1,4 +1,4 @@
-(defproject macchiato/core "0.2.22"
+(defproject macchiato/core "0.2.23"
   :description "ClojureScript Ring style HTTP server abstraction for Node.js."
   :url "https://github.com/yogthos/macchiato-framework/macchiato-core"
   :scm {:name "git"
@@ -8,7 +8,7 @@
   :clojurescript? true
   :dependencies [[com.andrewmcveigh/cljs-time "0.5.2"]
                  [com.cognitect/transit-cljs "0.8.256"]
-                 [funcool/cuerdas "2020.03.26-3"]
+                 [funcool/cuerdas "2022.06.13-401"]
                  [macchiato/fs "0.2.2"]
                  [org.clojure/clojure "1.10.1" :scope "provided"]
                  [org.clojure/clojurescript "1.10.597" :scope "provided"]]
