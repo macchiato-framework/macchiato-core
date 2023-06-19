@@ -1,13 +1,11 @@
 (ns macchiato.middleware.file
   (:require
-    [cljs.nodejs :as node]
     [cljs-time.core :refer [before?]]
     [macchiato.fs :as fs]
     [macchiato.util.response :as res]
-    [macchiato.util.mime-type :refer [ext-mime-type]]))
-
-(def Stream (node/require "stream"))
-(def etag (node/require "etag"))
+    [macchiato.util.mime-type :refer [ext-mime-type]]
+    ["stream" :as Stream]
+    ["etag" :as etag]))
 
 (defn- guess-mime-type
   "Returns a String corresponding to the guessed mime type for the given file,

@@ -1,16 +1,14 @@
 (ns macchiato.middleware.restful-format
   (:require
-    [cljs.nodejs :as node]
     [cognitect.transit :as t]
     [cljs.reader :as edn]
     [macchiato.util.request :as rq]
-    [macchiato.util.response :as r]))
+    [macchiato.util.response :as r]
+    ["concat-stream" :as concat-stream]
+    ["content-type" :as ct]
+    ["lru" :as node-lru]))
 
-(def concat-stream (node/require "concat-stream"))
-
-(def ct (node/require "content-type"))
-
-(def lru (let [LRUCache (node/require "lru")]
+(def lru (let [LRUCache node-lru]
            (LRUCache. #js {:maxElementsToStore 500})))
 
 (defn parse-accept-header [accept-header]

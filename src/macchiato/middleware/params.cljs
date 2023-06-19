@@ -1,11 +1,8 @@
 (ns macchiato.middleware.params
   (:require
-    [cljs.nodejs :as node]
-    [macchiato.util.request :as req]))
-
-(def qs (node/require "qs"))
-
-(def concat-stream (node/require "concat-stream"))
+    [macchiato.util.request :as req]
+    ["qs" :as qs]
+    ["concat-stream" :as concat-stream]))
 
 (defn decode [s]
   (js->clj (.parse qs s)))

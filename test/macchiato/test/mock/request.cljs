@@ -1,10 +1,8 @@
 (ns macchiato.test.mock.request
   (:require
-    [cljs.nodejs :as node]
-    [clojure.string :as s]))
-
-(def url (node/require "url"))
-(def querystring (node/require "querystring"))
+    [clojure.string :as s]
+    ["url" :as url]
+    ["querystring" :as querystring]))
 
 (defn- encode-params
   "Turn a map of parameters into a urlencoded string."

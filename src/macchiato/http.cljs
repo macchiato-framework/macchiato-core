@@ -3,11 +3,8 @@
     [cuerdas.core :as s]
     [macchiato.cookies :as cookies]
     [macchiato.middleware.session :as session]
-    [cljs.nodejs :as node]))
-
-(def ^:no-doc Stream (node/require "stream"))
-
-(def ^:no-doc url-parser (node/require "url"))
+    ["stream" :as Stream]
+    ["url" :as url-parser]))
 
 (defn- req->map [^js req ^js res {:keys [scheme] :as opts}]
   (let [conn         (.-connection req)

@@ -1,11 +1,10 @@
 (ns macchiato.middleware.multipart-params
   (:require
-    [cljs.nodejs :as node]
     [macchiato.middleware.nested-params :as np]
-    [macchiato.util.request :as req]))
+    [macchiato.util.request :as req]
+    ;; https://www.npmjs.com/package/multiparty
+    ["multiparty" :as multiparty]))
 
-;; https://www.npmjs.com/package/multiparty
-(def multiparty (node/require "multiparty"))
 
 (defn- multipart-form?
   "Does a request have a multipart form?"
@@ -45,7 +44,7 @@
     {} (js/Object.keys files)))
 
 (defn- multipart-request [handler request respond raise {:keys [progress-fn] :as opts}]
-  (let [form (multiparty.Form. (parse-opts opts))]
+  (let [form (multiparty/Form. (parse-opts opts))]
     (when progress-fn
       (.on form "progress" progress-fn))
     (.parse form (:body request)
