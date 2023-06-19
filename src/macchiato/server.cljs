@@ -1,10 +1,10 @@
 (ns macchiato.server
   (:require
-    [cljs.nodejs :as node]
     [macchiato.fs :as fs]
-    [macchiato.http :as http]))
-
-(def ^:no-doc ws (node/require "ws"))
+    [macchiato.http :as http]
+    ["ws" :as ws]
+    ["http" :as node-http]
+    ["https" :as node-https]))
 
 (defn http-server
   ":host - hostname to bind
@@ -13,7 +13,7 @@
   :on-success - success callback that's called when server starts listening"
   [{:keys [handler host port on-success websockets?] :as opts}]
   (let [http-handler (http/handler handler (assoc opts :scheme :http))
-        ^js module (node/require "http")
+        ^js module node-http
         ^js server (.createServer module http-handler)]
     (.listen server port host on-success)
     server))
@@ -29,7 +29,7 @@
   (let [pk           (fs/slurp private-key)
         pc           (fs/slurp certificate)
         http-handler (http/handler handler (assoc opts :scheme :https))
-        ^js module   (node/require "https")
+        ^js module   node-https
         ^js server   (.createServer module (clj->js {:key pk :cert pc}) http-handler)]
     (.listen server port host on-success)
     server))
@@ -40,7 +40,7 @@
   :on-success - success callback that's called when server starts listening"
   [{:keys [handler ipc-path on-success websockets?] :as opts}]
   (let [http-handler (http/handler handler (assoc opts :scheme :http))
-        ^js module   (node/require "http")
+        ^js module   node-http
         ^js server   (.createServer module http-handler)]
     (.listen server ipc-path on-success)
     server))
@@ -67,5 +67,5 @@
 (defn start-ws
   "starts a WebSocket server given a handler and a Node server instance"
   [server handler & [opts]]
-  (let [^js wss (ws.Server. #js{:server server})]
+  (let [^js wss (ws/Server. #js{:server server})]
     (.on wss "connection" (http/ws-handler handler opts))))

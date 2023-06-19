@@ -1,10 +1,7 @@
 (ns macchiato.cookies
   (:require
-    [cljs.nodejs :as node]))
-
-(def ^:no-doc Cookies (node/require "cookies"))
-
-(def ^:no-doc random-bytes (node/require "random-bytes"))
+    ["cookies" :as Cookies]
+    ["random-bytes" :as random-bytes]))
 
 (def ^:no-doc secret (str (random-bytes. 32)))
 

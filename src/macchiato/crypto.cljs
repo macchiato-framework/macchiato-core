@@ -1,9 +1,7 @@
 (ns macchiato.crypto
   (:require
-    [cljs.nodejs :as node]))
-
-(def ^:no-doc crypto (node/require "crypto"))
-(def ^:no-doc encryptor (node/require "simple-encryptor"))
+    ["crypto" :as crypto]
+    ["simple-encryptor" :as encryptor]))
 
 (defn encrypt [key data]
   (.encrypt (encryptor. key) data))

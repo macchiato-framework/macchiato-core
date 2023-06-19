@@ -7,8 +7,7 @@
     [macchiato.util.response :as r]
     [macchiato.test.mock.request :refer [request]]
     [macchiato.test.mock.util :refer [mock-handler raw-response ok-response]]
-    [macchiato.test.mock.transit :refer [MockPoint mock-write-handlers mock-read-handlers]]
-    [cljs.nodejs :as node]))
+    [macchiato.test.mock.transit :refer [MockPoint mock-write-handlers mock-read-handlers]]))
 
 (defn- mock-node-request [body content-type accept-type]
   (-> (request :post "/")
