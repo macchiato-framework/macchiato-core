@@ -1,4 +1,4 @@
-(defproject macchiato/core "0.2.23"
+(defproject macchiato/core "0.2.24"
   :description "ClojureScript Ring style HTTP server abstraction for Node.js."
   :url "https://github.com/yogthos/macchiato-framework/macchiato-core"
   :scm {:name "git"
